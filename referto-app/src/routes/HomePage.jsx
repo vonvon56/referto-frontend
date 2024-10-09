@@ -28,7 +28,7 @@ const HomePage = (props) => {
         setReferencesList(references);
       };
       getReferencesAPI();
-      
+
       const getAssignmentAPI = async () => {
         const assignment = await getAssignment(assignmentId);
         setCurrAssignment(assignment);

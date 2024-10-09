@@ -25,7 +25,7 @@ const ReferenceList = ({
           // findIndexofReference={findIndexofReference}
           selectedStyleName={selectedStyleName}
           index={index + 1}
-          referencesList = {referencesList}
+          referencesList={referencesList}
           setReferencesList={setReferencesList}
         />
       ))}

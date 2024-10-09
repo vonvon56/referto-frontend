@@ -109,7 +109,7 @@ const ReferenceItemDetail = ({
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       handleContentUpdate();
     }
@@ -122,16 +122,19 @@ const ReferenceItemDetail = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutsideInput);
+    document.addEventListener("mousedown", handleClickOutsideInput);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutsideInput);
+      document.removeEventListener("mousedown", handleClickOutsideInput);
     };
   }, [handleContentUpdate]);
 
   return (
     <div className="w-full h-100% py-2.5 border-b border-neutral-400 flex items-center gap-2.5">
       <div className="p-4 cursor-pointer">
-        <ChevronLeft className="text-neutral-700 w-6 h-6" onClick={handlePrevPage} />
+        <ChevronLeft
+          className="text-neutral-700 w-6 h-6"
+          onClick={handlePrevPage}
+        />
       </div>
       <div className="w-[53px] px-2.5 flex flex-col items-center gap-2.5">
         <div className="text-neutral-500 text-lg font-medium font-['Pretendard'] leading-[27px]">
@@ -164,10 +167,7 @@ const ReferenceItemDetail = ({
               onClick={handleEditContent}
             />
           )}
-          <Copy
-            className="text-neutral-500 w-6 h-6"
-            onClick={handleCopy}
-          />
+          <Copy className="text-neutral-500 w-6 h-6" onClick={handleCopy} />
         </div>
       </div>
       <div className="w-11 px-2.5 flex items-center gap-2.5 cursor-pointer">
@@ -177,7 +177,10 @@ const ReferenceItemDetail = ({
         />
       </div>
       <div className="p-6 cursor-pointer">
-        <ChevronRight className="text-neutral-700 h-6 w-6" onClick={handleNextPage} />
+        <ChevronRight
+          className="text-neutral-700 h-6 w-6"
+          onClick={handleNextPage}
+        />
       </div>
       {deleteModalIsOpen && (
         <DeleteConfirmModal
