@@ -23,35 +23,6 @@ const LogInModal = (props) => {
       inputRef.current.focus();
     };
   };
-  // const openLogInModal = () => {
-  //   console.log("openLogIn");
-  //   setShowLogIn(true);
-  // };
-
-  // const closeLogInModal = () => {
-  //   console.log("closeLogIn");
-  //   setShowLogIn(false);
-  // };
-
-  // const openSignUpModal = () => {
-  //   console.log("openSignup");
-  //   setShowSignUp(true);
-  // };
-
-  // const closeSignUpModal = () => {
-  //   console.log("closeSignup");
-  //   setShowSignUp(false);
-  // };
-
-  // useEffect(() => {
-  //   const loggedIn = !!getCookie("access_token");
-  //   setIsUserLoggedIn(loggedIn);
-  //   if (loggedIn) {
-  //     setShowLogIn(false);
-  //     setShowSignUp(false);
-  //   }
-  //   console.log("useEffect loggedIn:", loggedIn);
-  // }, [isUserLoggedIn]);
 
   const [logInData, setLogInData] = useState({
     email: "",
@@ -82,7 +53,6 @@ const LogInModal = (props) => {
     const firstAssignmentId = await fetchAssignments(user.email);
 
     if (firstAssignmentId) {
-      console.log("Redirecting to:", `/${firstAssignmentId}`);
       navigate(`/${firstAssignmentId}`);
     } else {
       console.error("First assignment ID is null");

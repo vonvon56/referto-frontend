@@ -13,7 +13,6 @@ const ReferenceMemo = ({ content, paperId }) => {
     const getMemoAPI = async () => {
       const memo = await getMemo(paperId);
       setMemoContent(memo.content);
-      console.log(memo);
     };
     getMemoAPI();
   }, [paperId]);

@@ -39,37 +39,41 @@ const FileUploadModal = ({ setIsOpen }) => {
         formData.append("assignment", assignmentId);
 
         try {
+          console.log('Uploading file:', files[i].name);
+          console.log('FormData:', {
+            pdf: formData.get('pdf'),
+            assignment: formData.get('assignment')
+          });
+
           const response_paper = await uploadPaper(formData, config);
-          console.log("response_paper 통과");
+          console.log('Upload successful:', response_paper);
+
           const response_paperinfo = await uploadPaperInfo(
             response_paper.data.paper_id
           );
-          console.log("response_paperinfo 통과");
-          //await createMemo(response_paper.data.paper_id);
-          console.log("paperinfo api successful");
+          console.log('Paper info updated:', response_paperinfo);
         } catch (error) {
-          console.error("1번째 Error during file processing:", error.message);
+          console.error('Upload error:', error);
+          if (error.data) {
+            console.error('Server error details:', error.data);
+          }
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
           return;
         }
       }
 
-      console.log("All files processed successfully.");
-      console.log("2번째 try 에러없음");
       setUploadStatus(false);
+      setUploadSuccessModalIsOpen(true);
       setTimeout(() => {
+        setIsOpen(false);
         window.location.reload();
-      }, 500);
+      }, 1000);
     } catch (error) {
-      console.error("2번째 Error during file processing:", error.message);
+      console.error('Process error:', error);
       setErrorAlertModalIsOpen(true);
       setUploadStatus(false);
     }
-    setUploadSuccessModalIsOpen(true);
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 1000);
   };
 
   const handleErrorAlertCancel = () => {
@@ -117,10 +121,10 @@ const FileUploadModal = ({ setIsOpen }) => {
               onClick={() => setIsOpen(false)}
             />
           </div>
-          <div className="self-stretch text-neutral-500 text-sm font-medium font-['Pretendard'] leading-tight">
+          {/* <div className="self-stretch text-neutral-500 text-sm font-medium font-['Pretendard'] leading-tight">
             * 인터넷 자료의 경우 사이트에서 ctr+s를 눌러 html 파일을 저장한 후
             업로드해주세요.
-          </div>
+          </div> */}
         </div>
         <input
           type="file"

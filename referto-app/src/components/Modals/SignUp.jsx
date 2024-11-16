@@ -44,7 +44,6 @@ const SignUpModal = ( props ) => {
     const firstAssignmentId = await fetchAssignments(user.email);
 
     if (firstAssignmentId) {
-      console.log("Redirecting to:", `/${firstAssignmentId}`);
       navigate(`/${firstAssignmentId}`);
     } else {
       console.error("First assignment ID is null");
