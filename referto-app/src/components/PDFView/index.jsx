@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { getNotes, createNote } from "../../apis/api";
+import { getNotes, createNote, deleteNote } from "../../apis/api";
+import { Trash2 } from "lucide-react";
 import {
   Worker,
   Viewer,
@@ -35,6 +36,12 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
     setShowSidebar(!showSidebar);
   };
 
+  const handleNoteDelete = async (noteId) => {
+    await deleteNote(noteId);
+    const updatedNotes = await getNotes(paperId);
+    setNotes(updatedNotes);
+  };
+
   // Initialize the plugins
   const highlightPluginInstance = highlightPlugin({
     renderHighlightTarget: (
@@ -56,13 +63,7 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
           target={
             <Button
               onClick={toggle}
-              style={{
-                background: "#E5E5E5",
-                color: "#171717",
-                borderRadius: "4px",
-                cursor: "pointer",
-                zIndex: 1000,
-              }}
+              className="bg-[#E5E5E5] text-[#171717] rounded cursor-pointer z-[1000]"
             >
               <MessageIcon />
             </Button>
@@ -91,24 +92,23 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
       selectedText,
       cancel,
     }) => {
-      const addNote = () => {
+      const addNote = async () => {
         if (message !== "") {
           const note = {
             content: message,
             highlightAreas,
             quote: selectedText,
           };
-          createNote(paperId, note);
+          await createNote(paperId, note);
           setNotes((prevNotes) => [...prevNotes, note]);
           setMessage("");
           cancel();
         }
       };
-      //1. pdf 밑을 하이라이트하면 추가 버튼이 가려짐.
-      //2. 가끔씩 하이라이트하면 에러 뜸.
 
       return (
         <div
+          id="Note_input"
           style={{
             background: "#fff",
             border: "1px solid rgba(0, 0, 0, .3)",
@@ -123,12 +123,7 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
           <div>
             <textarea
               rows={3}
-              style={{
-                border: "1px solid rgba(0, 0, 0, .3)",
-                width: "100%",
-                boxSizing: "border-box",
-                padding: "4px",
-              }}
+              className="border border-[rgba(0,0,0,0.3)] w-full box-border p-1"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             ></textarea>
@@ -228,10 +223,20 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
       메모
       {notes.map((note) => (
         <div
-          key={note.id}
+          key={note.note_id}
           onClick={() => jumpToHighlightArea(note.highlightAreas[0])}
-          className="cursor-pointer py-2 border-b-2 border-neutral-300"
+          className="cursor-pointer p-4 pb-4 border-2 border-neutral-300 m-2 rounded-md shadow-md"
         >
+          <div className="flex justify-end my-2">
+            <Trash2
+              className="text-red-400 w-4 h-4 mb-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNoteDelete(note.note_id);
+                console.log(note.note_id);
+              }}
+            />
+          </div>
           <div className="text-neutral-500 font-[Pretendard] font-medium">
             {note.quote}
           </div>

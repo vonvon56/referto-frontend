@@ -230,3 +230,12 @@ export const createNote = async (paperId, data) => {
     console.log("[ERROR] error while creating note");
   }
 };
+
+export const deleteNote = async (noteId) => {
+  const response = await instanceWithToken.delete(`/notes/detail/${noteId}/`);
+  if (response.status === 204) {
+    console.log("NOTE DELETE SUCCESS");
+  } else {
+    console.log("[ERROR] error while deleting note");
+  }
+};
