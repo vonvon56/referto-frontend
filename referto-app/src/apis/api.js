@@ -215,3 +215,18 @@ export const updateMemo = async (paperId, data) => {
     console.log("[ERROR] error while updating memo");
   }
 };
+
+export const getNotes = async (paperId) => {
+  const response = await instanceWithToken.get(`/notes/${paperId}/`);
+  return response.data;
+};
+
+export const createNote = async (paperId, data) => {
+  const response = await instanceWithToken.post(`/notes/${paperId}/`, data);
+  if (response.status === 201) {
+    console.log("NOTE CREATE SUCCESS");
+    return response.data;
+  } else {
+    console.log("[ERROR] error while creating note");
+  }
+};

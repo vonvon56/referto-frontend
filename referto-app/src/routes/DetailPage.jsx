@@ -107,7 +107,7 @@ const DetailPage = () => {
         <div className="w-full h-full p-5 flex-row justify-start items-start inline-flex">
           <div className="w-full h-full self-stretch px-2.5 py-3 rounded-lg border border-neutral-400 justify-center items-start gap-4 inline-flex">
             {paperUrl ? (
-              <PDFViewer pdfUrl={paperUrl} />
+              <PDFViewer pdfUrl={paperUrl} paperId={paperId} />
             ) : (
               <div>파일 로딩 중...</div>
             )}

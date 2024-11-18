@@ -1,4 +1,10 @@
-import { BrowserRouter, Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import HomePage from "./routes/HomePage";
@@ -11,7 +17,7 @@ import SignUpModal from "./components/Modals/SignUp";
 
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [firstAssignmentId, setFirstAssignmentId] = useState('');
+  const [firstAssignmentId, setFirstAssignmentId] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,11 +49,11 @@ function App() {
             path="/:assignmentId/:referenceId"
             element={
               <DetailPage
-                // referencesList={referencesList}
-                // handleReferenceDelete={handleReferenceDelete}
-                // handleReferenceUpdate={handleReferenceUpdate}
-                // findIndexofReference={findIndexofReference}
-                // selectedStyleName={selectedStyleName}
+              // referencesList={referencesList}
+              // handleReferenceDelete={handleReferenceDelete}
+              // handleReferenceUpdate={handleReferenceUpdate}
+              // findIndexofReference={findIndexofReference}
+              // selectedStyleName={selectedStyleName}
               />
             }
           />
@@ -84,17 +90,20 @@ function App() {
                 setIsUserLoggedIn={setIsUserLoggedIn}
               />
             }
-          />  
+          />
           <Route
             path="/"
             element={
-              isUserLoggedIn ? <Navigate to={`/${firstAssignmentId}`} /> :
-              <LandingPage
-                isUserLoggedIn={isUserLoggedIn}
-                setIsUserLoggedIn={setIsUserLoggedIn}
-              />
+              isUserLoggedIn ? (
+                <Navigate to={`/${firstAssignmentId}`} />
+              ) : (
+                <LandingPage
+                  isUserLoggedIn={isUserLoggedIn}
+                  setIsUserLoggedIn={setIsUserLoggedIn}
+                />
+              )
             }
-          />    
+          />
         </Routes>
       </BrowserRouter>
     </div>
