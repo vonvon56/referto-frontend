@@ -2,7 +2,7 @@ import dotDark from "../../assets/images/dot-dark.svg";
 import dotLight from "../../assets/images/dot-light.svg";
 import alertTriangle from "../../assets/images/alert-triangle.svg";
 import { Link, useParams, useNavigate} from "react-router-dom";
-import { EllipsisVertical  } from 'lucide-react';
+import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { useState, useRef, useEffect } from "react";
 import AssignmentModal from "../Modals/AssignmentModal";
 import { updateAssignment, deleteAssignment } from '../../apis/api';
@@ -32,15 +32,13 @@ const SidebarItem = ({
   document.body.style.overflow = 'hidden';
 
   const handleAssignment = () => {
-    // console.log("handleAssignment 함수가 호출됨");
     if (ref.current) {
-      // console.log("ref.current입니다.")
       const rect = ref.current.getBoundingClientRect();
-      setModalPosition({top: rect.bottom, left: rect.left});
+      setModalPosition({
+        top: rect.top - 25,
+        left: rect.left - 50
+      });
       setIsOpen(true);
-    } else {
-      // console.log("ref.current가 아닙니다.");
-      // console.log(ref.current);
     }
   }
 
@@ -75,8 +73,6 @@ const SidebarItem = ({
 
   const handleDeleteAssignment = async() => {
     const currentIndex = assignmentsList.findIndex((elem) => elem.assignment_id === assignmentId)
-
-    // setIsOpen(!isOpen)
 
     if (assignmentsList.length === 1) {
       setDeleteAlertModalIsOpen(true);
@@ -129,18 +125,32 @@ const SidebarItem = ({
     }
   };
 
+  const assignmentMenuOptions = [
+    {
+      icon: <Pencil className="w-4 h-4 text-neutral-500" />,
+      label: "수정",
+      onClick: () => setIsEdit(true)
+    },
+    {
+      icon: <Trash2 className="w-4 h-4 text-red-400" />,
+      label: "삭제",
+      textColor: "text-red-400",
+      onClick: () => setDeleteModalIsOpen(true)
+    }
+  ];
+
   return (
     <div
       id="item"
-      className="w-full rounded flex items-center justify-start gap-1.5 px-3.5 py-1.5 self-stretch w-full flex-[0_0_auto] overflow-hidden"
+      className="w-full rounded flex items-center justify-start gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 self-stretch w-full flex-[0_0_auto] overflow-hidden"
     >
       {selectedAssignmentId === assignmentId ? (
-        <div className="w-100% bg-neutral-300 rounded-[20px] flex items-center justify-start gap-1.5 px-3.5 py-2 self-stretch w-full flex-[0_0_auto] overflow-hidden">
-          <img alt="dot" src={dotDark} className="h-1.5 w-1.5 flex-none" />
-          <div className="w-[180px] font-medium text-neutral-700 leading-6 text-lg tracking-0 truncate">
+        <div className="w-100% bg-neutral-300 rounded-[20px] flex items-center justify-start gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 self-stretch w-full flex-[0_0_auto] overflow-hidden">
+          <img alt="dot" src={dotDark} className="h-1 sm:h-1.5 w-1 sm:w-1.5 flex-none" />
+          <div className="w-[150px] sm:w-[180px] font-medium text-neutral-700 leading-5 sm:leading-6 text-base sm:text-lg tracking-0 truncate">
           {isEdit ? (
             <input
-              className="border-2 border-neutral-300 rounded-md w-full h-100% px-1 focus:outline-none focus:border-neutral-500"
+              className="border-2 border-neutral-300 rounded-md w-full h-100% px-1 focus:outline-none focus:border-neutral-500 text-base sm:text-lg"
               value={onChangeValue}
               onChange={(e) => setOnChangeValue(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -155,7 +165,7 @@ const SidebarItem = ({
           <div className="flex-grow"></div>
           <div className="flex-none">
             <EllipsisVertical  
-              className="text-neutral-700 selection:w-[18px] h-[18px] cursor-pointer" 
+              className="text-neutral-700 w-4 sm:w-[18px] h-4 sm:h-[18px] cursor-pointer" 
               onClick={handleAssignment} 
               ref={ref}/>
           </div>
@@ -163,22 +173,22 @@ const SidebarItem = ({
       ) : (
         <Link
           to={`/${assignmentId}`}
-          className="w-100% rounded flex items-center justify-start gap-1.5 px-3.5 py-2 w-full truncate"
+          className="w-100% rounded flex items-center justify-start gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 w-full truncate"
         >
-          <img alt="dot" src={dotLight} className="h-1.5 w-1.5 flex-none" />
-          <div className="w-[180px] font-medium text-neutral-400 leading-6 text-lg tracking-0 truncate">
+          <img alt="dot" src={dotLight} className="h-1 sm:h-1.5 w-1 sm:w-1.5 flex-none" />
+          <div className="w-[150px] sm:w-[180px] font-medium text-neutral-400 leading-5 sm:leading-6 text-base sm:text-lg tracking-0 truncate">
             {content}
           </div>
         </Link>
       )}
-      {isOpen && <AssignmentModal 
-        assignmentId={assignmentId} 
-        position={modalPosition}
-        handleEditAssignment={handleEditAssignment} 
-        setDeleteModalIsOpen={setDeleteModalIsOpen}
-        isEdit={isEdit}
-        setIsEdit={setIsEdit}
-        setIsOpen={setIsOpen}/>}
+      {isOpen && (
+        <AssignmentModal
+          position={modalPosition}
+          options={assignmentMenuOptions}
+          setIsOpen={setIsOpen}
+          setDeleteModalIsOpen={setDeleteModalIsOpen}
+        />
+      )}
       {deleteModalIsOpen && <DeleteConfirmModal 
         handleDelete={handleDeleteAssignment}
         handleDeleteCancel={handleDeleteAssignmentCancel}

@@ -14,16 +14,13 @@ const StyleList = ({
   ];
 
   return (
-    <div className="flex flex-1 gap-7">
+    <div className="flex flex-wrap flex-1 gap-4 sm:gap-7">
       {styles.map((style) => (
         <StyleItem
           key={style.id}
-          // styleId={style.id}
           styleName={style.name}
           selectedStyleName={selectedStyleName}
           setSelectedStyleName={setSelectedStyleName}
-          // selectedStyleId={selectedStyleId}
-          // setSelectedStyleId={setSelectedStyleId}
           selectedAssignmentId={selectedAssignmentId}
         />
       ))}

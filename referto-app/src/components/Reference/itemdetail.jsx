@@ -6,6 +6,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  MoreVertical,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { updatePaperInfo, deletePaper } from "../../apis/api";
@@ -32,6 +33,8 @@ const ReferenceItemDetail = ({
   const { assignmentId } = useParams();
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   // Initialize content when referenceName changes
   useEffect(() => {
@@ -128,23 +131,36 @@ const ReferenceItemDetail = ({
     };
   }, [handleContentUpdate]);
 
+  // 메뉴 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-100% py-2.5 border-b border-neutral-400 flex items-center gap-2.5">
-      <div className="p-4 cursor-pointer">
-        <ChevronLeft className="text-neutral-700 w-6 h-6" onClick={handlePrevPage} />
+    <div className="w-full h-100% py-2 sm:py-2.5 border-b border-neutral-400 flex items-center gap-1.5 sm:gap-2.5">
+      <div className="p-2 sm:p-4 cursor-pointer">
+        <ChevronLeft className="text-neutral-700 w-5 sm:w-6 h-5 sm:h-6" onClick={handlePrevPage} />
       </div>
-      <div className="w-[53px] px-2.5 flex flex-col items-center gap-2.5">
-        <div className="text-neutral-500 text-lg font-medium font-['Pretendard'] leading-[27px]">
+      <div className="w-[40px] sm:w-[53px] px-1.5 sm:px-2.5 flex flex-col items-center gap-2.5">
+        <div className="text-neutral-500 text-md sm:text-lg font-medium font-['Pretendard'] leading-[24px] sm:leading-[27px]">
           {index}
         </div>
       </div>
-      <div className="flex-grow flex items-center gap-[15px] overflow-hidden">
-        <div className="flex-grow text-neutral-700 text-md font-medium font-['Pretendard'] leading-[27px] overflow-hidden">
+      <div className="flex-grow flex items-center gap-2 sm:gap-[15px] overflow-hidden">
+        <div className="flex-grow text-neutral-700 text-md sm:text-lg font-medium font-['Pretendard'] leading-[24px] sm:leading-[27px] overflow-hidden">
           {isEdit ? (
             <textarea
               value={content}
               onChange={handleChange}
-              className="border-2 border-neutral-300 rounded-md w-full px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none"
+              className="border-2 border-neutral-300 rounded-md w-full px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none text-sm sm:text-md"
               ref={inputRef}
               onKeyDown={handleKeyDown}
             />
@@ -152,32 +168,78 @@ const ReferenceItemDetail = ({
             <div className="break-words whitespace-pre-wrap">{content}</div>
           )}
         </div>
-        <div className="w-[83px] px-2.5 flex items-center gap-[15px] cursor-pointer">
+        {/* 데스크톱에서만 보이는 수정/복사 버튼 */}
+        <div className="hidden sm:flex w-[83px] px-1.5 sm:px-2.5 items-center gap-2 sm:gap-[15px] cursor-pointer">
           {isEdit ? (
             <Check
-              className="text-neutral-500 w-6 h-6"
+              className="text-neutral-500 w-5 sm:w-6 h-5 sm:h-6"
               onClick={handleContentUpdate}
             />
           ) : (
             <Pencil
-              className="text-neutral-500 w-6 h-6"
+              className="text-neutral-500 w-5 sm:w-6 h-5 sm:h-6"
               onClick={handleEditContent}
             />
           )}
           <Copy
-            className="text-neutral-500 w-6 h-6"
+            className="text-neutral-500 w-5 sm:w-6 h-5 sm:h-6"
             onClick={handleCopy}
           />
         </div>
       </div>
-      <div className="w-11 px-2.5 flex items-center gap-2.5 cursor-pointer">
+      {/* 데스크톱에서만 보이는 삭제 버튼 */}
+      <div className="hidden sm:flex w-8 sm:w-11 px-1.5 sm:px-2.5 items-center gap-2.5 cursor-pointer">
         <Trash2
-          className="text-red-400 w-6 h-6"
+          className="text-red-400 w-5 sm:w-6 h-5 sm:h-6"
           onClick={() => setDeleteModalIsOpen(true)}
         />
       </div>
-      <div className="p-6 cursor-pointer">
-        <ChevronRight className="text-neutral-700 h-6 w-6" onClick={handleNextPage} />
+      {/* 모바일에서만 보이는 미트볼 메뉴 */}
+      <div className="relative sm:hidden px-1.5">
+        <MoreVertical
+          className="text-neutral-500 w-5 h-5 cursor-pointer"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        />
+        {isMenuOpen && (
+          <div 
+            ref={menuRef}
+            className="absolute right-0 top-6 w-[120px] bg-white rounded-lg shadow-lg py-1 z-10"
+          >
+            <div 
+              className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                handleEditContent();
+                setIsMenuOpen(false);
+              }}
+            >
+              <Pencil className="w-4 h-4 text-neutral-500" />
+              <span className="text-sm text-neutral-700">수정</span>
+            </div>
+            <div 
+              className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                handleCopy();
+                setIsMenuOpen(false);
+              }}
+            >
+              <Copy className="w-4 h-4 text-neutral-500" />
+              <span className="text-sm text-neutral-700">복사</span>
+            </div>
+            <div 
+              className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                setDeleteModalIsOpen(true);
+                setIsMenuOpen(false);
+              }}
+            >
+              <Trash2 className="w-4 h-4 text-red-400" />
+              <span className="text-sm text-red-400">삭제</span>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="p-3 sm:p-6 cursor-pointer">
+        <ChevronRight className="text-neutral-700 w-5 sm:w-6 h-5 sm:h-6" onClick={handleNextPage} />
       </div>
       {deleteModalIsOpen && (
         <DeleteConfirmModal
