@@ -206,7 +206,7 @@ const LandingPage = (props) => {
             className="text-neutral-600 text-base sm:text-lg md:text-xl leading-relaxed text-center"
           >
             로그인 없이 REFERTO의 주요 기능을 체험해볼 수 있습니다.<br/>
-            PDF 파일을 업로드하고 자동으로 생성되는 참고문헌을 확인해보세요.
+            PDF 파일을 업로드하고 APA 양식의 참고문헌을 확인해보세요.
           </motion.div>
           <div className="w-full flex justify-center">
             <motion.div

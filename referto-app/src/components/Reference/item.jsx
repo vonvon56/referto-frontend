@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Pencil, Copy, Trash2, Eye, Check } from "lucide-react";
+import { Pencil, Copy, Trash2, Eye, Check, MoreVertical } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { deletePaper, updatePaperInfo } from "../../apis/api";
 import DeleteConfirmModal from "../Modals/DeleteConfirmModal";
@@ -25,6 +25,8 @@ const ReferenceItem = ({
   const [copySuccessModalIsOpen, setCopySuccessModalIsOpen] = useState(false);
   const inputRef = useRef(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     setContent(referenceName);
@@ -130,20 +132,39 @@ const ReferenceItem = ({
     }
   },);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-100% py-2.5 border-b border-neutral-400 justify-start items-center gap-2.5 inline-flex">
-      <div className="w-[53px] self-stretch px-2.5 flex-col justify-center items-center gap-2.5 inline-flex">
-        <div className="text-neutral-500 text-lg font-medium font-['Pretendard'] leading-[27px]">
+    <div className="w-full h-100% py-2 sm:py-2.5 border-b border-neutral-400 justify-start items-center gap-1.5 sm:gap-2.5 inline-flex">
+      <div className="w-[40px] sm:w-[53px] self-stretch px-1.5 sm:px-2.5 flex-col justify-center items-center gap-2.5 inline-flex">
+        <div className="text-neutral-500 text-md sm:text-lg font-medium font-['Pretendard'] leading-[27px]">
           {index}
         </div>
       </div>
-      <div className="grow shrink basis-0 self-stretch justify-start items-center gap-[15px] flex overflow-hidden">
-        <div className="h-100% grow shrink basis-0 text-neutral-700 text-md font-medium font-['Pretendard'] leading-[27px] overflow-hidden">
+      <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 sm:gap-[15px] flex overflow-hidden">
+        <div 
+          className={`h-100% grow shrink basis-0 text-neutral-700 text-md sm:text-lg font-medium font-['Pretendard'] leading-[24px] sm:leading-[27px] overflow-hidden ${!isEdit && 'sm:cursor-default cursor-pointer'}`}
+          onClick={() => {
+            if (!isEdit) {
+              handleClickView();
+            }
+          }}
+        >
           {isEdit ? (
             <textarea
               value={content}
               onChange={handleChange}
-              className="border-2 border-neutral-300 rounded-md w-full h-100% px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none"
+              className="border-2 border-neutral-300 rounded-md w-full h-100% px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none text-sm sm:text-md"
               ref={inputRef}
               onKeyDown={handleKeyDown}
             />
@@ -151,7 +172,7 @@ const ReferenceItem = ({
             <div className="break-words whitespace-pre-wrap">{content}</div>
           )}
         </div>
-        <div className="w-[83px] self-stretch px-2.5 justify-start items-center gap-[15px] flex cursor-pointer">
+        <div className="hidden sm:flex w-[83px] self-stretch px-2.5 justify-start items-center gap-[15px] cursor-pointer">
           {isEdit ? (
             <Check
               className="text-neutral-500 w-6 h-6 relative"
@@ -171,24 +192,67 @@ const ReferenceItem = ({
       </div>
       <div
         onClick={handleClickView}
-        className={`px-3 py-2 bg-neutral-900 rounded-md justify-center items-center gap-2.5 flex cursor-pointer`}
+        className={`hidden sm:flex px-2 sm:px-3 py-1.5 sm:py-2 bg-neutral-900 rounded-md justify-center items-center gap-1.5 sm:gap-2.5 cursor-pointer`}
       >
-        <div className="justify-center items-center gap-2.5 flex">
-          <Eye className="text-white w-[18px] h-[18px] relative" />
+        <div className="justify-center items-center gap-1.5 sm:gap-2.5 flex">
+          <Eye className="text-white w-4 sm:w-[18px] h-4 sm:h-[18px] relative" />
         </div>
-        <div className="text-right text-white text-lg font-medium font-['Pretendard'] leading-normal">
+        <div className="text-right text-white text-sm sm:text-lg font-medium font-['Pretendard'] leading-normal">
           보기
         </div>
       </div>
       <Link
         to={`/${assignmentId}`}
-        className="w-11 self-stretch px-2.5 justify-center items-center gap-2.5 flex cursor-pointer"
+        className="hidden sm:flex w-11 self-stretch px-2.5 justify-center items-center gap-2.5 cursor-pointer"
       >
         <Trash2
           className="text-red-400 w-6 h-6 relative"
           onClick={() => setDeleteModalIsOpen(true)}
         />
       </Link>
+      <div className="relative sm:hidden">
+        <MoreVertical
+          className="text-neutral-500 w-5 h-5 cursor-pointer"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        />
+        {isMenuOpen && (
+          <div 
+            ref={menuRef}
+            className="w-[90px] absolute right-0 top-6 bg-white rounded-lg shadow-lg py-1 z-10"
+          >
+            <div 
+              className="px-5 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                handleEditContent();
+                setIsMenuOpen(false);
+              }}
+            >
+              <Pencil className="w-4 h-4 text-neutral-500" />
+              <span className="text-sm text-neutral-700 font-medium font-['Pretendard']">수정</span>
+            </div>
+            <div 
+              className="px-5 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                handleCopy();
+                setIsMenuOpen(false);
+              }}
+            >
+              <Copy className="w-4 h-4 text-neutral-500" />
+              <span className="text-sm text-neutral-700 font-medium font-['Pretendard']">복사</span>
+            </div>
+            <div 
+              className="px-5 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              onClick={() => {
+                setDeleteModalIsOpen(true);
+                setIsMenuOpen(false);
+              }}
+            >
+              <Trash2 className="w-4 h-4 text-red-400" />
+              <span className="text-sm text-red-400 font-medium font-['Pretendard']">삭제</span>
+            </div>
+          </div>
+        )}
+      </div>
       {deleteModalIsOpen && (
         <DeleteConfirmModal
           deleteParams={paperId}

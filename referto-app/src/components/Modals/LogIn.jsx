@@ -1,20 +1,13 @@
 import { useState, useRef } from "react";
 import { signIn, getAssignments, getUser } from "../../apis/api";
-import Naver from "../../assets/images/Naver.png"
+import Google from "../../assets/images/Google.png"
 import { useNavigate } from "react-router-dom";
 import AlertModal from "./AlertModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
-// import logo from "../../assets/images/logo.svg"
-// import { getCookie } from "../../utils/cookie";
-// import SignUpModal from "../Modals/SignUp";
-// import LogInSuccessModal from "./LogInSuccessModal";
 
 const LogInModal = (props) => {
   const inputRef = useRef(null);
   const [errorAlertModalIsOpen, setErrorAlertModalIsOpen] = useState(false);
-  // const [showLogIn, ] = useState(true);
-  // const [showSignUp, setShowSignUp] = useState(false);
-  // const [logInSuccessModalIsOpen, setLogInSuccessModalIsOpen] = useState(false);
   const { isUserLoggedIn, setIsUserLoggedIn } = props;
   const navigate = useNavigate();
   const handleErrorAlertCancel = () => {
@@ -64,8 +57,6 @@ const LogInModal = (props) => {
     try {
       await signIn(logInData);
       setIsUserLoggedIn(true);
-      // setLogInSuccessModalIsOpen(true);
-      // closeLogInModal();
       handleRedirect();
     } catch (error) {
       console.error("Error logging in:", error.message);
@@ -73,20 +64,14 @@ const LogInModal = (props) => {
     }
   };
 
-  // const handleSignUpSwitch = () => {
-  //   // closeLogInModal();
-  //   openSignUpModal();
-  // };
-
-  // const handleNaverLogin = async(e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await naverSignIn()
-  //     closeLogInModal();
-  //   } catch (error) {
-  //     console.error('Error logging in:', error);
-  //   }
-  // }
+  const handleGoogleLogin = async(e) => {
+    e.preventDefault();
+    try {
+      // await GoogleSignIn()
+    } catch (error) {
+      console.error('Error logging in:', error);
+    }
+  }
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex flex-column items-center justify-center bg-gray-200 z-50">
@@ -126,17 +111,20 @@ const LogInModal = (props) => {
                 로그인하기
               </button>
             </form>
-            {/* <button
-              className="w-full my-2 h-10 bg-green-500 rounded-lg flex justify-center items-center gap-2.5"
-              // onClick={handleNaverLogin}
+            <div className="text-center font-['Pretendard'] text-gray-700">
+              or
+            </div>
+            <button
+              className="w-full my-2 h-11 bg-white border-2 border-neutral-200 rounded-lg flex justify-center items-center gap-2.5"
+              onClick={handleGoogleLogin}
             >
-              <img className="w-10 h-10" alt="Naver" src={Naver} />
+              <img className="w-8 h-8" alt="Google" src={Google} />
               <div className="justify-center items-center gap-2.5 flex">
-                <div className="w-full text-center text-white text-base font-medium font-['Pretendard'] leading-normal">
-                  Log in with Naver
+                <div className="w-full text-center text-neutral-900 text-base font-medium font-['Pretendard'] leading-normal">
+                  구글로 시작하기
                 </div>
               </div>
-            </button> */}
+            </button>
             <div className="text-center font-['Pretendard'] text-gray-700">
               회원이 아니신가요?
             </div>

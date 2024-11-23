@@ -4,9 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PDFViewer from "../components/PDFView";
 import ReferenceMemo from "../components/memos/memo";
 import { getPaper } from "../apis/api";
-import BlockMobileModal from "../components/Modals/BlockMobile.jsx";
 
-const DetailPage = () => {
+const DetailPage = ({ setIsDetailPage }) => {
   const location = useLocation();
   const {
     index,
@@ -21,10 +20,10 @@ const DetailPage = () => {
 
   const [paperUrl, setPaperUrl] = useState(null);
   const [content, setContent] = useState(referenceName);
-  const [isScreenSmall, setIsScreenSmall] = useState(window.innerWidth < 1100);
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsDetailPage(true);
     const fetchPaper = async () => {
       try {
         if (paperId) {
@@ -38,21 +37,10 @@ const DetailPage = () => {
     fetchPaper();
   }, [paperId]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsScreenSmall(window.innerWidth < 1100);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   const handlePrevPage = () => {
     if (index > 1) {
       const newReference = referencesList[index - 1];
       const newReferenceId = newReference["paperInfo_id"];
-
       navigate(`/${assignmentId}/${newReferenceId}`, {
         state: {
           ...location.state,
@@ -84,8 +72,7 @@ const DetailPage = () => {
   };
 
   return (
-    <div className="w-full h-[959px] px-[100px] pt-[50px] pb-[100px] flex-col justify-start items-center inline-flex">
-      {isScreenSmall && <BlockMobileModal />}
+    <div className="w-full min-h-screen px-4 sm:px-[100px] pt-6 sm:pt-[50px] pb-8 sm:pb-[100px] flex flex-col">
       <ReferenceItemDetail
         index={index}
         referenceId={referenceId}
@@ -98,19 +85,25 @@ const DetailPage = () => {
         handlePrevPage={handlePrevPage}
         handleNextPage={handleNextPage}
       />
-      <div className="w-full h-full justify-start items-start inline-flex">
-        <div className="w-full h-full p-5 flex-row justify-start items-start inline-flex">
-          <div className="w-full h-full self-stretch px-2.5 py-3 rounded-lg border border-neutral-400 justify-center items-start gap-4 inline-flex">
+      
+      {/* Main content area */}
+      <div className="w-full flex-1 flex flex-col lg:flex-row gap-4">
+        {/* PDF Viewer Section */}
+        <div className="w-full lg:w-2/3 p-3 sm:p-5">
+          <div className="w-full h-full rounded-lg border border-neutral-400 p-2 sm:p-3">
             {paperUrl ? (
               <PDFViewer pdfUrl={paperUrl} />
             ) : (
-              <div>파일 로딩 중...</div>
+              <div className="text-sm sm:text-base">파일 로딩 중...</div>
             )}
           </div>
         </div>
 
-        <div className="w-[413px] h-full px-6 py-5 border-neutral-400 flex-col justify-start items-center gap-[15px] inline-flex">
-          <ReferenceMemo paperId={paperId} content={content} />
+        {/* Memo Section */}
+        <div className="w-full lg:w-1/3 p-3 sm:p-5">
+          <div className="w-full h-full">
+            <ReferenceMemo paperId={paperId} content={content} />
+          </div>
         </div>
       </div>
     </div>

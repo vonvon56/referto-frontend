@@ -3,6 +3,7 @@ import { signUp, getUser, getAssignments } from "../../apis/api";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "./AlertModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
+import Google from "../../assets/images/Google.png"
 
 const SignUpModal = ( props ) => {
   const { isUserLoggedIn, setIsUserLoggedIn} = props;
@@ -54,7 +55,6 @@ const SignUpModal = ( props ) => {
     e.preventDefault();
     try {
       await signUp(signUpData);
-      // onClose(); 
       setIsUserLoggedIn(true);
       handleRedirect();
     } catch (error) {
@@ -63,10 +63,14 @@ const SignUpModal = ( props ) => {
     }
   };
 
-  // const handleLogInSwitch = () => {
-  //   onClose();
-  //   onSwitch();
-  // };
+  const handleGoogleLogin = async(e) => {
+    e.preventDefault();
+    try {
+      // await GoogleSignIn()
+    } catch (error) {
+      console.error('Error logging in:', error);
+    }
+  }
 
 
   return (
@@ -107,6 +111,20 @@ const SignUpModal = ( props ) => {
                 회원가입하기
               </button>
             </form>
+            <div className="text-center font-['Pretendard'] text-gray-700">
+              or
+            </div>
+            <button
+              className="w-full my-2 h-11 bg-white border-2 border-neutral-200 rounded-lg flex justify-center items-center gap-2.5"
+              onClick={handleGoogleLogin}
+            >
+              <img className="w-8 h-8" alt="Google" src={Google} />
+              <div className="justify-center items-center gap-2.5 flex">
+                <div className="w-full text-center text-neutral-900 text-base font-medium font-['Pretendard'] leading-normal">
+                  구글로 시작하기
+                </div>
+              </div>
+            </button>
             <div className="text-center font-['Pretendard'] text-gray-700">
               이미 계정이 있으신가요?
             </div>

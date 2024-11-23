@@ -3,9 +3,6 @@ import ReferenceItem from "./item";
 const ReferenceList = ({
   referencesList,
   setReferencesList,
-  // handleReferenceDelete,
-  // handleReferenceUpdate,
-  // findIndexofReference,
   selectedStyleName,
 }) => {
   return (

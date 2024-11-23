@@ -12,6 +12,8 @@ import SignUpModal from "./components/Modals/SignUp";
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [firstAssignmentId, setFirstAssignmentId] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDetailPage, setIsDetailPage] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,33 +39,26 @@ function App() {
         <Header
           isUserLoggedIn={isUserLoggedIn}
           setIsUserLoggedIn={setIsUserLoggedIn}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          showMenuButton={window.location.pathname.split('/').length === 2}
+          isDetailPage={isDetailPage}
         />
         <Routes>
           <Route
             path="/:assignmentId/:referenceId"
-            element={
-              <DetailPage
-                // referencesList={referencesList}
-                // handleReferenceDelete={handleReferenceDelete}
-                // handleReferenceUpdate={handleReferenceUpdate}
-                // findIndexofReference={findIndexofReference}
-                // selectedStyleName={selectedStyleName}
-              />
-            }
+            element={<DetailPage
+              setIsDetailPage={setIsDetailPage}
+            />}
           />
           <Route
             path="/:assignmentId"
             element={
               <HomePage
-                // referencesList={referencesList}
-                // setReferencesList={setReferencesList}
-                // handleReferenceDelete={handleReferenceDelete}
-                // handleReferenceUpdate={handleReferenceUpdate}
-                // getAllReferences={getAllReferences}
-                // findIndexofReference={findIndexofReference}
                 isUserLoggedIn={isUserLoggedIn}
-                // selectedStyleName={selectedStyleName}
-                // setSelectedStyleName={setSelectedStyleName}
+                isSidebarOpen={isSidebarOpen}
+                setIsSidebarOpen={setIsSidebarOpen}
+                setIsDetailPage={setIsDetailPage}
               />
             }
           />
