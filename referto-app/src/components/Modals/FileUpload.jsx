@@ -1,13 +1,13 @@
 import { FileUp, X } from "lucide-react";
-import { useState, useRef, useCallback } from "react";
-import { createMemo, uploadPaper, uploadPaperInfo } from "../../apis/api";
+import { useState, useRef } from "react";
+import { uploadPaper, uploadPaperInfo, testUploadPaper } from "../../apis/api";
 import { useParams } from "react-router-dom";
 import Loading from "./loading";
 import AlertModal from "./AlertModal";
 import SuccessModal from "./SuccessModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
 
-const FileUploadModal = ({ setIsOpen }) => {
+const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList }) => {
   const [uploadStatus, setUploadStatus] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [errorAlertModalIsOpen, setErrorAlertModalIsOpen] = useState(false);
@@ -33,6 +33,22 @@ const FileUploadModal = ({ setIsOpen }) => {
     };
 
     try {
+      // 랜딩 페이지용 테스트 업로드 처리
+      if (isLandingPage) {
+        const formData = new FormData();
+        formData.append("pdf", files[0]);
+
+        const response = await testUploadPaper(formData, config);
+        setTestReferencesList(response.data.references);
+        
+        setUploadStatus(false);
+        setUploadSuccessModalIsOpen(true);
+        setTimeout(() => {
+          setIsOpen(false);
+        }, 1000);
+        return;
+      }
+
       for (let i = 0; i < files.length; i++) {
         const formData = new FormData();
         formData.append("pdf", files[i]);

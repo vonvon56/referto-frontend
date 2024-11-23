@@ -29,12 +29,6 @@ export const getUser = async () => {
   return response.data;
 };
 
-// export const naverSignIn = async() => {
-//   window.location.href = 'http://localhost:8000/naverlogin/'
-//   const response = await instance.get("naverlogin/");
-//   return response;
-// }
-
 // Assignments 관련 API들
 export const getAssignments = async () => {
   const response = await instanceWithToken.get("/assignments/");
@@ -213,5 +207,17 @@ export const updateMemo = async (paperId, data) => {
     return response.data;
   } else {
     console.log("[ERROR] error while updating memo");
+  }
+};
+
+
+// 랜딩 페이지 테스트 api
+export const testUploadPaper = async (formData, config) => {
+  const response = await instance.post("/landingpage/", formData, config);
+  if (response.status === 200 || response.status === 201) {
+    console.log("TEST PAPER UPLOAD SUCCESS");
+    return response;
+  } else {
+    console.log("[ERROR] error while uploading test paper");
   }
 };

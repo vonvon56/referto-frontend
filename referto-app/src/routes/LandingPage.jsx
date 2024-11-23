@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import LogInModal from '../components/Modals/LogIn';
 import landingimage from '../assets/images/landingimage.png';
 import hyeri from '../assets/images/hyeri.jpg';
 import yebin from '../assets/images/yebin.jpg';
@@ -12,11 +11,19 @@ import { motion } from 'framer-motion';
 import FileUploadModal from '../components/Modals/FileUpload';
 import { Upload } from 'lucide-react';
 
-const LandingPage = (props) => {
-  const { isUserLoggedIn, setIsUserLoggedIn } = props;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const LandingPage = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [demoReferencesList, setDemoReferencesList] = useState([]);
+  const [testReferencesList, setTestReferencesList] = useState([
+    {
+      APA: "Kim, J., & Lee, S. (2023). The impact of artificial intelligence on modern society. Journal of Technology, 45(2), 112-125.",
+    },
+    {
+      APA: "Park, M. H. (2024). Understanding digital transformation in education. Educational Technology Review, 18(1), 23-40.",
+    },
+    {
+      APA: "Choi, H. W., & Jung, Y. S. (2022). Sustainable development in smart cities: A systematic review. Urban Studies Quarterly, 30(4), 567-589.",
+    }
+  ]);
   const navigate = useNavigate();
 
   const teamMembers = [
@@ -206,7 +213,7 @@ const LandingPage = (props) => {
             className="text-neutral-600 text-base sm:text-lg md:text-xl leading-relaxed text-center"
           >
             로그인 없이 REFERTO의 주요 기능을 체험해볼 수 있습니다.<br/>
-            PDF 파일을 업로드하고 APA 양식의 참고문헌을 확인해보세요.
+            PDF 파일을 업로드하고 생성된 참고문헌을 확인해보세요.
           </motion.div>
           <div className="w-full flex justify-center">
             <motion.div
@@ -231,21 +238,31 @@ const LandingPage = (props) => {
           viewport={{ once: true }}
           className="flex flex-col items-center gap-8 w-full max-w-3xl"
         >
-          {demoReferencesList.length > 0 && (
+          {testReferencesList.length > 0 && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               className="w-full p-6 bg-neutral-50 rounded-lg border border-neutral-200"
             >
-              <div className="font-semibold mb-4">생성된 참고문헌</div>
-              {demoReferencesList.map((ref, index) => (
+              <div className="font-semibold mb-4 text-xl">생성된 참고문헌</div>
+              {testReferencesList.map((ref, index) => (
                 <motion.div 
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="p-3 bg-white rounded mb-2 shadow-sm"
+                  transition={{ 
+                    duration: 0.4, 
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 100 
+                  }}
+                  whileHover={{
+                    scale: 1.01,
+                    backgroundColor: "#f8f8f8",
+                    transition: { duration: 0.2 }
+                  }}
+                  className="p-3 bg-white rounded mb-2 shadow-sm cursor-pointer"
                 >
                   {ref.APA}
                 </motion.div>
@@ -319,18 +336,11 @@ const LandingPage = (props) => {
           </div>
         </motion.div>
 
-        {isModalOpen && (
-          <LogInModal
-            isUserLoggedIn={isUserLoggedIn}
-            setIsUserLoggedIn={setIsUserLoggedIn}
-          />
-        )}
-
         {isUploadModalOpen && (
           <FileUploadModal 
             setIsOpen={setIsUploadModalOpen}
-            isDemoMode={true}
-            setDemoReferencesList={setDemoReferencesList}
+            isLandingPage={true}
+            setTestReferencesList={setTestReferencesList}
           />
         )}
     </div>
