@@ -1,14 +1,16 @@
 import logo from "../../assets/images/logo.svg";
 import userprofile from "../../assets/images/user.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import LogInModal from "../Modals/LogIn";
 import { useState, useEffect } from "react";
 import { removeCookie } from "../../utils/cookie";
 import { getUser, getAssignments } from "../../apis/api";
-import { Menu } from "lucide-react";
+import { Menu, ChevronLeft } from "lucide-react";
 
 const Header = ( props ) => {
   const { isUserLoggedIn, setIsUserLoggedIn, isSidebarOpen, setIsSidebarOpen, isDetailPage } = props;
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
   const [firstAssignmentId, setFirstAssignmentId] = useState('')
   const navigate = useNavigate()
   const [user, setUser] = useState("null");
@@ -55,13 +57,26 @@ const Header = ( props ) => {
   return (
     <div className="flex w-full h-[55px] sm:h-[65px] items-center justify-between px-4 sm:px-10 py-0 relative bg-neutral-700">
       <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 relative flex-[0_0_auto]">
-        {!isDetailPage && (
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="sm:hidden mr-1"
-        >
-            <Menu className="text-white w-5 h-5" />
-          </button>
+        {!isLandingPage && (
+          <>
+            {isDetailPage ? (
+              <button
+                onClick={() => navigate(-1)}
+                className="sm:hidden mr-1"
+              >
+                <ChevronLeft className="text-white w-6 h-6" />
+              </button>
+            ) : (
+              !isDetailPage && (
+                <button
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  className="sm:hidden mr-1"
+                >
+                  <Menu className="text-white w-6 h-6" />
+                </button>
+              )
+            )}
+          </>
         )}
         <div className="flex w-[120px] sm:w-[145px] items-center gap-2 sm:gap-2.5 relative">
           <div className="relative w-[120px] sm:w-[146.54px] h-[32px] sm:h-[38px] mr-[-1.54px] cursor-pointer" 

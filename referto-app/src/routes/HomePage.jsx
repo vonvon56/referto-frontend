@@ -54,24 +54,25 @@ const HomePage = (props) => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-row justify-between relative">
+    <div className="w-full flex h-[calc(100vh-55px)]">
       <div className={`
-        fixed sm:relative 
-        w-[200px] sm:w-[300px] h-full 
+        fixed sm:sticky top-[55px] h-[calc(100vh-55px)]
+        w-[200px] sm:w-[300px]
         flex flex-col items-start gap-[30px] sm:gap-[50px] 
         px-3 sm:pl-[20px] sm:pr-[10px] py-5 sm:py-[30px] 
-        bg-neutral-200 overflow-hidden
+        bg-neutral-200
         transition-transform duration-300
         sm:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         z-50
+        overflow-y-auto
       `}>
         <SidebarList isUserLoggedIn={props.isUserLoggedIn} />
       </div>
       <div 
-        className="w-full h-[850px] px-6 sm:px-[100px] py-8 sm:py-[70px] flex-col justify-start items-center gap-6 sm:gap-[50px] inline-flex overflow-auto"
+        className="flex-1 overflow-y-auto h-[calc(100vh-55px)] px-6 sm:px-[100px] py-8 sm:py-[70px] flex-col justify-start items-center gap-6 sm:gap-[50px] inline-flex"
         onClick={() => {
-          if (window.innerWidth < 640 && isSidebarOpen) { // 640px는 sm 브레이크포인트
+          if (window.innerWidth < 640 && isSidebarOpen) {
             setIsSidebarOpen(false);
           }
         }}
@@ -82,7 +83,7 @@ const HomePage = (props) => {
           </div>
           <div className="sm:hidden">
             <div
-              className="px-2 py-1.5 bg-neutral-900 rounded-md justify-center items-center gap-2 flex cursor-pointer"
+              className="px-3 py-2 bg-neutral-900 rounded-md justify-center items-center gap-2 flex cursor-pointer"
               onClick={() => setIsOpen(true)}
             >
               <Upload className="text-white w-4 h-4 relative" />

@@ -7,7 +7,7 @@ import AlertModal from "./AlertModal";
 import SuccessModal from "./SuccessModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
 
-const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList }) => {
+const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUploadSuccess }) => {
   const [uploadStatus, setUploadStatus] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [errorAlertModalIsOpen, setErrorAlertModalIsOpen] = useState(false);
@@ -33,19 +33,25 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList }) =>
     };
 
     try {
-      // 랜딩 페이지용 테스트 업로드 처리
       if (isLandingPage) {
         const formData = new FormData();
         formData.append("pdf", files[0]);
 
-        const response = await testUploadPaper(formData, config);
-        setTestReferencesList(response.data.references);
-        
-        setUploadStatus(false);
-        setUploadSuccessModalIsOpen(true);
-        setTimeout(() => {
-          setIsOpen(false);
-        }, 1000);
+        try {
+          const response = await testUploadPaper(formData, config);
+          const references = [response.data.paper_info];
+          setTestReferencesList(references);
+          setUploadStatus(false);
+          setUploadSuccessModalIsOpen(true);
+          if (onUploadSuccess) onUploadSuccess();
+          setTimeout(() => {
+            setIsOpen(false);
+          }, 1000);
+        } catch (error) {
+          console.error('Landing page upload error:', error);
+          setErrorAlertModalIsOpen(true);
+          setUploadStatus(false);
+        }
         return;
       }
 
@@ -112,11 +118,25 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList }) =>
     e.preventDefault();
     setIsDragOver(false);
     const files = e.dataTransfer.files;
+    
+    if (isLandingPage && files.length > 1) {
+      // 랜딩페이지에서 여러 파일을 드래그했을 때 처리
+      setErrorAlertModalIsOpen(true);
+      return;
+    }
+    
     handleFileChange(files);
   };
 
   const handleInputChange = (e) => {
     const files = e.target.files;
+    
+    if (isLandingPage && files.length > 1) {
+      // 랜딩페이지에서 여러 파일을 선택했을 때 처리
+      setErrorAlertModalIsOpen(true);
+      return;
+    }
+    
     handleFileChange(files);
   };
 
@@ -140,7 +160,8 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList }) =>
         </div>
         <input
           type="file"
-          multiple
+          multiple={!isLandingPage}
+          accept=".pdf"
           ref={fileInputRef}
           style={{ display: "none" }}
           onChange={handleInputChange}
@@ -160,7 +181,10 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList }) =>
               pdf 첨부 가능
             </div>
             <div className="self-stretch text-center text-neutral-300 text-xs sm:text-sm font-medium font-['Pretendard'] leading-none">
-              클릭하거나 업로드할 파일을 드롭하세요.
+              {isLandingPage 
+                ? "PDF 파일 하나를 선택해주세요."
+                : "클릭하거나 업로드할 파일을 드롭하세요."
+              }
             </div>
           </div>
         </div>
