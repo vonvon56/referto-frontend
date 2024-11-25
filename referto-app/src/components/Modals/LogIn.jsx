@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { signIn, getAssignments, getUser } from "../../apis/api";
+import { signIn, getAssignments, getUser, googleSignIn, naverSignIn, kakaoSignIn } from "../../apis/api";
 import Google from "../../assets/images/Google.png"
 import Naver from "../../assets/images/Naver.png"
 import Kakao from "../../assets/images/Kakao.png"
@@ -69,27 +69,36 @@ const LogInModal = (props) => {
   const handleGoogleLogin = async(e) => {
     e.preventDefault();
     try {
-      // await GoogleSignIn()
+      await googleSignIn();
+      setIsUserLoggedIn(true);
+      // 소셜 로그인 후 리다이렉트는 백엔드에서 처리됨
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('Error logging in with Google:', error);
+      setErrorAlertModalIsOpen(true);
     }
   }
 
   const handleNaverLogin = async(e) => {
     e.preventDefault();
     try {
-      // await NaverSignIn()
+      await naverSignIn();
+      setIsUserLoggedIn(true);
+      // 소셜 로그인 후 리다이렉트는 백엔드에서 처리됨
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('Error logging in with Naver:', error);
+      setErrorAlertModalIsOpen(true);
     }
   } 
 
   const handleKakaoLogin = async(e) => {
     e.preventDefault();
     try {
-      // await KakaoSignIn()
+      await kakaoSignIn();
+      setIsUserLoggedIn(true);
+      // 소셜 로그인 후 리다이렉트는 백엔드에서 처리됨
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('Error logging in with Kakao:', error);
+      setErrorAlertModalIsOpen(true);
     }
   }
 
@@ -169,7 +178,7 @@ const LogInModal = (props) => {
                 </div>
               </button>
             </div>
-            <div className="text-center font-['Pretendard'] text-gray-700">
+            <div className="text-center font-['Pretendard'] text-neutral-700">
               회원이 아니신가요?
             </div>
             <button

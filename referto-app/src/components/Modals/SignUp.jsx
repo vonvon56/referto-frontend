@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { signUp, getUser, getAssignments } from "../../apis/api";
+import { signUp, getUser, getAssignments, googleSignIn, naverSignIn, kakaoSignIn } from "../../apis/api";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "./AlertModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
@@ -68,20 +68,31 @@ const SignUpModal = ( props ) => {
   const handleGoogleLogin = async(e) => {
     e.preventDefault();
     try {
-      // await GoogleSignIn()
+      await googleSignIn();
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error('Error signing up with Google:', error);
+      setErrorAlertModalIsOpen(true);
     }
   }
 
   const handleNaverLogin = async(e) => {
     e.preventDefault();
-    // await NaverSignIn()
+    try {
+      await naverSignIn();
+    } catch (error) {
+      console.error('Error signing up with Naver:', error);
+      setErrorAlertModalIsOpen(true);
+    }
   } 
 
   const handleKakaoLogin = async(e) => {
     e.preventDefault();
-    // await KakaoSignIn()
+    try {
+      await kakaoSignIn();
+    } catch (error) {
+      console.error('Error signing up with Kakao:', error);
+      setErrorAlertModalIsOpen(true);
+    }
   } 
 
   return (
@@ -160,7 +171,7 @@ const SignUpModal = ( props ) => {
                 </div>
               </button>
             </div>
-            <div className="text-center font-['Pretendard'] text-gray-700">
+            <div className="text-center font-['Pretendard'] text-neutral-700">
               이미 계정이 있으신가요?
             </div>
             <button className="underline font-['Pretendard']" onClick={() => navigate('/account/login')}>
