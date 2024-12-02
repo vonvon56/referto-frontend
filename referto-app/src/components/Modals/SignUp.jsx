@@ -1,8 +1,11 @@
 import { useState, useRef } from "react";
-import { signUp, getUser, getAssignments } from "../../apis/api";
+import { signUp, getUser, getAssignments, googleSignIn, naverSignIn, kakaoSignIn } from "../../apis/api";
 import { useNavigate } from "react-router-dom";
 import AlertModal from "./AlertModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
+import Google from "../../assets/images/Google.png"
+import Naver from "../../assets/images/Naver.png"
+import Kakao from "../../assets/images/Kakao.png"
 
 const SignUpModal = ( props ) => {
   const { isUserLoggedIn, setIsUserLoggedIn} = props;
@@ -44,7 +47,6 @@ const SignUpModal = ( props ) => {
     const firstAssignmentId = await fetchAssignments(user.email);
 
     if (firstAssignmentId) {
-      console.log("Redirecting to:", `/${firstAssignmentId}`);
       navigate(`/${firstAssignmentId}`);
     } else {
       console.error("First assignment ID is null");
@@ -55,7 +57,6 @@ const SignUpModal = ( props ) => {
     e.preventDefault();
     try {
       await signUp(signUpData);
-      // onClose(); 
       setIsUserLoggedIn(true);
       handleRedirect();
     } catch (error) {
@@ -64,11 +65,35 @@ const SignUpModal = ( props ) => {
     }
   };
 
-  // const handleLogInSwitch = () => {
-  //   onClose();
-  //   onSwitch();
-  // };
+  const handleGoogleLogin = async(e) => {
+    e.preventDefault();
+    try {
+      await googleSignIn();
+    } catch (error) {
+      console.error('Error signing up with Google:', error);
+      setErrorAlertModalIsOpen(true);
+    }
+  }
 
+  const handleNaverLogin = async(e) => {
+    e.preventDefault();
+    try {
+      await naverSignIn();
+    } catch (error) {
+      console.error('Error signing up with Naver:', error);
+      setErrorAlertModalIsOpen(true);
+    }
+  } 
+
+  const handleKakaoLogin = async(e) => {
+    e.preventDefault();
+    try {
+      await kakaoSignIn();
+    } catch (error) {
+      console.error('Error signing up with Kakao:', error);
+      setErrorAlertModalIsOpen(true);
+    }
+  } 
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 z-50">
@@ -109,6 +134,44 @@ const SignUpModal = ( props ) => {
               </button>
             </form>
             <div className="text-center font-['Pretendard'] text-gray-700">
+              or
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-2 my-2">
+              <button
+                className="w-full h-11 bg-white border-2 border-neutral-200 rounded-lg flex justify-center items-center gap-2.5"
+                onClick={handleGoogleLogin}
+              >
+                <img className="w-4 h-4" alt="Google" src={Google} />
+                <div className="justify-center items-center flex">
+                  <div className="w-full text-center text-neutral-900 text-base font-medium font-['Pretendard'] leading-normal">
+                    구글로 시작하기
+                  </div>
+                </div>
+              </button>
+              <button
+                className="w-full h-11 bg-[#03C75A] rounded-lg flex justify-center items-center gap-2.5"
+                onClick={handleNaverLogin}
+              >
+                <img className="w-4 h-4" alt="Naver" src={Naver} />
+                <div className="justify-center items-center flex">
+                  <div className="w-full text-center text-white text-base font-medium font-['Pretendard'] leading-normal">
+                    네이버로 시작하기
+                  </div>
+                </div>
+              </button>
+              <button
+                className="w-full h-11 bg-[#FEE500] rounded-lg flex justify-center items-center gap-2.5"
+                onClick={handleKakaoLogin}
+              >
+                <img className="w-4 h-4" alt="Kakao" src={Kakao} />
+                <div className="justify-center items-center flex">
+                  <div className="w-full text-center text-neutral-900 text-base font-medium font-['Pretendard'] leading-normal">
+                    카카오로 시작하기
+                  </div>
+                </div>
+              </button>
+            </div>
+            <div className="text-center font-['Pretendard'] text-neutral-700">
               이미 계정이 있으신가요?
             </div>
             <button className="underline font-['Pretendard']" onClick={() => navigate('/account/login')}>

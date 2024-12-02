@@ -4,9 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PDFViewer from "../components/PDFView";
 import ReferenceMemo from "../components/memos/memo";
 import { getPaper } from "../apis/api";
-import BlockMobileModal from "../components/Modals/BlockMobile.jsx";
 
-const DetailPage = () => {
+const DetailPage = ({ setIsDetailPage }) => {
   const location = useLocation();
   const {
     index,
@@ -21,10 +20,11 @@ const DetailPage = () => {
 
   const [paperUrl, setPaperUrl] = useState(null);
   const [content, setContent] = useState(referenceName);
-  const [isScreenSmall, setIsScreenSmall] = useState(window.innerWidth < 1100);
   const navigate = useNavigate();
+  const [isMemoOpen, setIsMemoOpen] = useState(false);
 
   useEffect(() => {
+    setIsDetailPage(true);
     const fetchPaper = async () => {
       try {
         if (paperId) {
@@ -38,22 +38,11 @@ const DetailPage = () => {
     fetchPaper();
   }, [paperId]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsScreenSmall(window.innerWidth < 1100);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   const handlePrevPage = () => {
     if (index > 1) {
       console.log("*****entered");
       const newReference = referencesList[index - 2];
       const newReferenceId = newReference["paperInfo_id"];
-
       navigate(`/${assignmentId}/${newReferenceId}`, {
         state: {
           ...location.state,
@@ -89,33 +78,68 @@ const DetailPage = () => {
   };
 
   return (
-    <div className="w-full h-[959px] px-[100px] pt-[50px] pb-[100px] flex-col justify-start items-center inline-flex">
-      {isScreenSmall && <BlockMobileModal />}
-      <ReferenceItemDetail
-        index={index}
-        referenceId={referenceId}
-        referenceName={referenceName}
-        content={content}
-        setContent={setContent}
-        selectedStyleName={selectedStyleName}
-        assignmentId={assignmentId}
-        paperId={paperId}
-        handlePrevPage={handlePrevPage}
-        handleNextPage={handleNextPage}
-      />
-      <div className="w-full h-full justify-start items-start inline-flex">
-        <div className="w-full h-full p-5 flex-row justify-start items-start inline-flex">
-          <div className="w-full h-full self-stretch px-2.5 py-3 rounded-lg border border-neutral-400 justify-center items-start gap-4 inline-flex">
-            {paperUrl ? (
-              <PDFViewer pdfUrl={paperUrl} paperId={paperId} />
-            ) : (
-              <div>파일 로딩 중...</div>
-            )}
-          </div>
-        </div>
+    <div className="w-full h-screen overflow-y-auto">
+      {/* Header (not sticky anymore) */}
+      <div className="bg-white px-4 sm:px-[100px] pt-6 sm:pt-[50px]">
+        <ReferenceItemDetail
+          index={index}
+          referenceId={referenceId}
+          referenceName={referenceName}
+          content={content}
+          setContent={setContent}
+          selectedStyleName={selectedStyleName}
+          assignmentId={assignmentId}
+          paperId={paperId}
+          handlePrevPage={handlePrevPage}
+          handleNextPage={handleNextPage}
+        />
+      </div>
 
-        <div className="w-[413px] h-full px-6 py-5 border-neutral-400 flex-col justify-start items-center gap-[15px] inline-flex">
-          <ReferenceMemo paperId={paperId} content={content} />
+      {/* Main Content */}
+      <div className="px-4 sm:px-[100px] pb-8 sm:pb-[100px]">
+        <div className="w-full h-full flex flex-col lg:flex-row gap-4">
+          {/* PDF Viewer Section */}
+          <div className="w-full lg:w-2/3 p-3 sm:p-5">
+            <div className="w-full h-full rounded-lg border border-neutral-400 p-2 sm:p-3">
+              {paperUrl ? (
+                <PDFViewer pdfUrl={paperUrl} />
+              ) : (
+                <div className="text-sm sm:text-base">파일 로딩 중...</div>
+              )}
+            </div>
+          </div>
+
+          {/* Desktop Memo Section */}
+          <div className="hidden lg:block w-1/3 p-3 sm:p-5">
+            <div className="w-full h-full">
+              <ReferenceMemo paperId={paperId} content={content} />
+            </div>
+          </div>
+
+          {/* Mobile Memo Handler */}
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 flex flex-col items-center">
+            <button
+              className="bg-white w-full px-4 py-2 border-t-2 border-gray-200 rounded-t-2xl flex items-center justify-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]"
+              onClick={() => setIsMemoOpen(!isMemoOpen)}
+            >
+              <div className="w-12 h-1 bg-gray-300 rounded-full mb-1" />
+            </button>
+          </div>
+
+          {/* Mobile Memo Modal */}
+          {isMemoOpen && (
+            <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+              <div className="absolute bottom-0 w-full bg-white rounded-t-2xl p-4 animate-slide-up">
+                <button
+                  className="w-full flex justify-center mb-2"
+                  onClick={() => setIsMemoOpen(false)}
+                >
+                  <div className="w-12 h-1 bg-neutral-300 rounded-full" />
+                </button>
+                <ReferenceMemo paperId={paperId} content={content} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

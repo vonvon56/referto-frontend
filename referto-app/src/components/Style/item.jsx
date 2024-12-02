@@ -18,19 +18,19 @@ const StyleItem = ({
   };
 
   return (
-    <div className="justify-start items-center gap-2 flex">
+    <div className="justify-start items-center gap-1.5 sm:gap-2 flex">
       {selectedStyleName === styleName ? (
         <div className="relative">
-          <div className="w-4 h-4 rounded-full border border-neutral-500" />
-          <div className="w-2 h-2 left-[4px] top-[4px] absolute bg-neutral-900 rounded-full border border-neutral-500" />
+          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border border-neutral-500" />
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 left-[4px] top-[4px] absolute bg-neutral-900 rounded-full border border-neutral-500" />
         </div>
       ) : (
         <div
-          className="w-4 h-4 rounded-full border border-neutral-500"
+          className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border border-neutral-500"
           onClick={handleSelect}
         />
       )}
-      <div className="text-neutral-900 text-lg font-medium font-['Pretendard'] leading-[14px]">
+      <div className="text-neutral-900 text-base sm:text-lg font-medium font-['Pretendard'] leading-[14px]">
         {styleName}
       </div>
     </div>

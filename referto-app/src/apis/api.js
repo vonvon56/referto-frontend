@@ -29,12 +29,6 @@ export const getUser = async () => {
   return response.data;
 };
 
-// export const naverSignIn = async() => {
-//   window.location.href = 'http://localhost:8000/naverlogin/'
-//   const response = await instance.get("naverlogin/");
-//   return response;
-// }
-
 // Assignments 관련 API들
 export const getAssignments = async () => {
   const response = await instanceWithToken.get("/assignments/");
@@ -106,7 +100,7 @@ export const getPaper = async (paperId) => {
     if (response.status === 200) {
       console.log("PAPER GET SUCCESS");
       const blob = response.data;
-      return URL.createObjectURL(blob); // Create a URL for the blob
+      return URL.createObjectURL(blob);
     } else {
       console.log("[ERROR] Error while getting PAPER");
     }
@@ -114,16 +108,6 @@ export const getPaper = async (paperId) => {
     console.error("Failed to fetch the paper:", error);
   }
 };
-
-// paper 수정은 현재 없음
-// export const updatePaper = async (id, data) => {
-//     const response = await instanceWithToken.put(`/paper/${id}/`, data);
-//     if (response.status === 200) {
-//       console.log("PAPER UPDATE SUCCESS");
-//     } else {
-//       console.log("[ERROR] error while updating assignment");
-//     }
-//   };
 
 export const deletePaper = async (paper_id) => {
   const response = await instanceWithToken.delete(`/papers/${paper_id}/`);
@@ -164,7 +148,6 @@ export const getPaperInfos = async (assignment_id) => {
   );
   if (response.status === 200) {
     console.log("PAPERINFOS GET SUCCESS");
-    //console.log("Response Data:", JSON.stringify(response.data, null, 2));
     return response.data;
   } else {
     console.log("[ERROR] error while getting PAPERINFOS");
@@ -214,6 +197,41 @@ export const updateMemo = async (paperId, data) => {
   } else {
     console.log("[ERROR] error while updating memo");
   }
+};
+
+// 랜딩 페이지 테스트 api
+export const testUploadPaper = async (formData, config) => {
+  try {
+    const response = await instance.post(
+      "/papers/landingpage/",
+      formData,
+      config
+    );
+    if (response.status === 200 || response.status === 201) {
+      console.log("TEST PAPER UPLOAD SUCCESS");
+      return response;
+    }
+    throw new Error("Upload failed");
+  } catch (error) {
+    console.error("[ERROR] error while uploading test paper:", error);
+    throw error;
+  }
+};
+
+// 소셜 로그인 API들
+export const googleSignIn = async () => {
+  const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/google/`;
+  window.location.href = redirectUri;
+};
+
+export const naverSignIn = async () => {
+  const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/naver/`;
+  window.location.href = redirectUri;
+};
+
+export const kakaoSignIn = async () => {
+  const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/kakao/`;
+  window.location.href = redirectUri;
 };
 
 export const getNotes = async (paperId) => {
