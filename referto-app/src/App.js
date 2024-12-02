@@ -1,4 +1,10 @@
-import { BrowserRouter, Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import HomePage from "./routes/HomePage";
@@ -11,7 +17,7 @@ import SignUpModal from "./components/Modals/SignUp";
 
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [firstAssignmentId, setFirstAssignmentId] = useState('');
+  const [firstAssignmentId, setFirstAssignmentId] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDetailPage, setIsDetailPage] = useState(false);
 
@@ -41,16 +47,14 @@ function App() {
           setIsUserLoggedIn={setIsUserLoggedIn}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
-          showMenuButton={window.location.pathname.split('/').length === 2}
+          showMenuButton={window.location.pathname.split("/").length === 2}
           isDetailPage={isDetailPage}
         />
         <div className="flex-1 overflow-y-auto w-full">
           <Routes>
             <Route
               path="/:assignmentId/:referenceId"
-              element={<DetailPage
-                setIsDetailPage={setIsDetailPage}
-              />}
+              element={<DetailPage setIsDetailPage={setIsDetailPage} />}
             />
             <Route
               path="/:assignmentId"
@@ -80,17 +84,20 @@ function App() {
                   setIsUserLoggedIn={setIsUserLoggedIn}
                 />
               }
-            />  
+            />
             <Route
               path="/"
               element={
-                isUserLoggedIn ? <Navigate to={`/${firstAssignmentId}`} /> :
-                <LandingPage
-                  isUserLoggedIn={isUserLoggedIn}
-                  setIsUserLoggedIn={setIsUserLoggedIn}
-                />
+                isUserLoggedIn ? (
+                  <Navigate to={`/${firstAssignmentId}`} />
+                ) : (
+                  <LandingPage
+                    isUserLoggedIn={isUserLoggedIn}
+                    setIsUserLoggedIn={setIsUserLoggedIn}
+                  />
+                )
               }
-            />    
+            />
           </Routes>
         </div>
       </BrowserRouter>

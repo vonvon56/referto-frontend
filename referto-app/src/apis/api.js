@@ -199,11 +199,14 @@ export const updateMemo = async (paperId, data) => {
   }
 };
 
-
 // 랜딩 페이지 테스트 api
 export const testUploadPaper = async (formData, config) => {
   try {
-    const response = await instance.post("/papers/landingpage/", formData, config);
+    const response = await instance.post(
+      "/papers/landingpage/",
+      formData,
+      config
+    );
     if (response.status === 200 || response.status === 201) {
       console.log("TEST PAPER UPLOAD SUCCESS");
       return response;
@@ -229,4 +232,28 @@ export const naverSignIn = async () => {
 export const kakaoSignIn = async () => {
   const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/kakao/`;
   window.location.href = redirectUri;
+};
+
+export const getNotes = async (paperId) => {
+  const response = await instanceWithToken.get(`/notes/${paperId}/`);
+  return response.data;
+};
+
+export const createNote = async (paperId, data) => {
+  const response = await instanceWithToken.post(`/notes/${paperId}/`, data);
+  if (response.status === 201) {
+    console.log("NOTE CREATE SUCCESS");
+    return response.data;
+  } else {
+    console.log("[ERROR] error while creating note");
+  }
+};
+
+export const deleteNote = async (noteId) => {
+  const response = await instanceWithToken.delete(`/notes/detail/${noteId}/`);
+  if (response.status === 204) {
+    console.log("NOTE DELETE SUCCESS");
+  } else {
+    console.log("[ERROR] error while deleting note");
+  }
 };

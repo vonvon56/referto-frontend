@@ -13,7 +13,7 @@ const ReferenceList = ({
           reference={reference}
           selectedStyleName={selectedStyleName}
           index={index + 1}
-          referencesList = {referencesList}
+          referencesList={referencesList}
           setReferencesList={setReferencesList}
         />
       ))}

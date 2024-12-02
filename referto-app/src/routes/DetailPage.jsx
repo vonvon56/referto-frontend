@@ -40,7 +40,8 @@ const DetailPage = ({ setIsDetailPage }) => {
 
   const handlePrevPage = () => {
     if (index > 1) {
-      const newReference = referencesList[index - 1];
+      console.log("*****entered");
+      const newReference = referencesList[index - 2];
       const newReferenceId = newReference["paperInfo_id"];
       navigate(`/${assignmentId}/${newReferenceId}`, {
         state: {
@@ -56,9 +57,13 @@ const DetailPage = ({ setIsDetailPage }) => {
   };
 
   const handleNextPage = () => {
-    if (index < referencesList.length - 1) {
-      const newReference = referencesList[index + 1];
+    if (index < referencesList.length) {
+      const newReference = referencesList[index];
       const newReferenceId = newReference["paperInfo_id"];
+
+      //debugging -- we thought we changed index to index+1 (so that it would start from 1, not 0)
+      //but it was still 1 higher than the original index
+
       navigate(`/${assignmentId}/${newReferenceId}`, {
         state: {
           ...location.state,
@@ -89,7 +94,7 @@ const DetailPage = ({ setIsDetailPage }) => {
           handleNextPage={handleNextPage}
         />
       </div>
-      
+
       {/* Main Content */}
       <div className="px-4 sm:px-[100px] pb-8 sm:pb-[100px]">
         <div className="w-full h-full flex flex-col lg:flex-row gap-4">

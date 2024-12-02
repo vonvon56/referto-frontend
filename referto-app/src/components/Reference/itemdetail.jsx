@@ -112,7 +112,7 @@ const ReferenceItemDetail = ({
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       handleContentUpdate();
     }
@@ -125,9 +125,9 @@ const ReferenceItemDetail = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutsideInput);
+    document.addEventListener("mousedown", handleClickOutsideInput);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutsideInput);
+      document.removeEventListener("mousedown", handleClickOutsideInput);
     };
   }, [handleContentUpdate]);
 
@@ -138,16 +138,19 @@ const ReferenceItemDetail = ({
         setIsMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
     <div className="w-full h-100% py-2 sm:py-2.5 border-b border-neutral-400 flex items-center gap-1.5 sm:gap-2.5">
       <div className="p-2 sm:p-4 cursor-pointer">
-        <ChevronLeft className="text-neutral-700 w-5 sm:w-6 h-5 sm:h-6" onClick={handlePrevPage} />
+        <ChevronLeft
+          className="text-neutral-700 w-5 sm:w-6 h-5 sm:h-6"
+          onClick={handlePrevPage}
+        />
       </div>
       <div className="w-[40px] sm:w-[53px] px-1.5 sm:px-2.5 flex flex-col items-center gap-2.5">
         <div className="text-neutral-500 text-md sm:text-lg font-medium font-['Pretendard'] leading-[24px] sm:leading-[27px]">
@@ -201,11 +204,11 @@ const ReferenceItemDetail = ({
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         />
         {isMenuOpen && (
-          <div 
+          <div
             ref={menuRef}
             className="absolute right-0 top-6 w-[120px] bg-white rounded-lg shadow-lg py-1 z-10"
           >
-            <div 
+            <div
               className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 handleEditContent();
@@ -215,7 +218,7 @@ const ReferenceItemDetail = ({
               <Pencil className="w-4 h-4 text-neutral-500" />
               <span className="text-sm text-neutral-700">수정</span>
             </div>
-            <div 
+            <div
               className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 handleCopy();
@@ -225,7 +228,7 @@ const ReferenceItemDetail = ({
               <Copy className="w-4 h-4 text-neutral-500" />
               <span className="text-sm text-neutral-700">복사</span>
             </div>
-            <div 
+            <div
               className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 setDeleteModalIsOpen(true);
@@ -239,7 +242,10 @@ const ReferenceItemDetail = ({
         )}
       </div>
       <div className="p-3 sm:p-6 cursor-pointer">
-        <ChevronRight className="text-neutral-700 w-5 sm:w-6 h-5 sm:h-6" onClick={handleNextPage} />
+        <ChevronRight
+          className="text-neutral-700 w-5 sm:w-6 h-5 sm:h-6"
+          onClick={handleNextPage}
+        />
       </div>
       {deleteModalIsOpen && (
         <DeleteConfirmModal

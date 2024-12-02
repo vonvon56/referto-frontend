@@ -7,21 +7,27 @@ import { removeCookie } from "../../utils/cookie";
 import { getUser, getAssignments } from "../../apis/api";
 import { Menu, ChevronLeft } from "lucide-react";
 
-const Header = ( props ) => {
-  const { isUserLoggedIn, setIsUserLoggedIn, isSidebarOpen, setIsSidebarOpen, isDetailPage } = props;
+const Header = (props) => {
+  const {
+    isUserLoggedIn,
+    setIsUserLoggedIn,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    isDetailPage,
+  } = props;
   const location = useLocation();
-  const isLandingPage = location.pathname === '/';
-  const [firstAssignmentId, setFirstAssignmentId] = useState('')
-  const navigate = useNavigate()
+  const isLandingPage = location.pathname === "/";
+  const [firstAssignmentId, setFirstAssignmentId] = useState("");
+  const navigate = useNavigate();
   const [user, setUser] = useState("null");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
-      setIsModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-      setIsModalOpen(false);
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -60,10 +66,7 @@ const Header = ( props ) => {
         {!isLandingPage && (
           <>
             {isDetailPage ? (
-              <button
-                onClick={() => navigate(-1)}
-                className="sm:hidden mr-1"
-              >
+              <button onClick={() => navigate(-1)} className="sm:hidden mr-1">
                 <ChevronLeft className="text-white w-6 h-6" />
               </button>
             ) : (
@@ -79,12 +82,13 @@ const Header = ( props ) => {
           </>
         )}
         <div className="flex w-[120px] sm:w-[145px] items-center gap-2 sm:gap-2.5 relative">
-          <div className="relative w-[120px] sm:w-[146.54px] h-[32px] sm:h-[38px] mr-[-1.54px] cursor-pointer" 
+          <div
+            className="relative w-[120px] sm:w-[146.54px] h-[32px] sm:h-[38px] mr-[-1.54px] cursor-pointer"
             onClick={() => {
               if (isUserLoggedIn) {
                 navigate(`/${firstAssignmentId}`);
               } else {
-                navigate('/');
+                navigate("/");
               }
             }}
           >
@@ -106,7 +110,11 @@ const Header = ( props ) => {
               <div className="w-fit mx-3 font-[Pretendard] font-medium text-neutral-50 text-base sm:text-lg text-center hidden sm:block">
                 {user}
               </div>
-              <img alt="profile" src={userprofile} className="w-5 h-5 sm:w-6 sm:h-6 mr-5 hidden sm:block" />
+              <img
+                alt="profile"
+                src={userprofile}
+                className="w-5 h-5 sm:w-6 sm:h-6 mr-5 hidden sm:block"
+              />
               <Link
                 to="/"
                 onClick={handleSignOut}
@@ -123,10 +131,13 @@ const Header = ( props ) => {
               >
                 로그인
               </div>
-              {isModalOpen && <LogInModal 
-                onClose={handleCloseModal}
-                isUserLoggedIn={isUserLoggedIn}
-                setIsUserLoggedIn={setIsUserLoggedIn} />}
+              {isModalOpen && (
+                <LogInModal
+                  onClose={handleCloseModal}
+                  isUserLoggedIn={isUserLoggedIn}
+                  setIsUserLoggedIn={setIsUserLoggedIn}
+                />
+              )}
             </div>
           )}
         </div>
