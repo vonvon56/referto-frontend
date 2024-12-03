@@ -71,33 +71,8 @@ const LogInModal = (props) => {
     try {
       await googleSignIn();
       setIsUserLoggedIn(true);
-      // 소셜 로그인 후 리다이렉트는 백엔드에서 처리됨
     } catch (error) {
       console.error('Error logging in with Google:', error);
-      setErrorAlertModalIsOpen(true);
-    }
-  }
-
-  const handleNaverLogin = async(e) => {
-    e.preventDefault();
-    try {
-      await naverSignIn();
-      setIsUserLoggedIn(true);
-      // 소셜 로그인 후 리다이렉트는 백엔드에서 처리됨
-    } catch (error) {
-      console.error('Error logging in with Naver:', error);
-      setErrorAlertModalIsOpen(true);
-    }
-  } 
-
-  const handleKakaoLogin = async(e) => {
-    e.preventDefault();
-    try {
-      await kakaoSignIn();
-      setIsUserLoggedIn(true);
-      // 소셜 로그인 후 리다이렉트는 백엔드에서 처리됨
-    } catch (error) {
-      console.error('Error logging in with Kakao:', error);
       setErrorAlertModalIsOpen(true);
     }
   }
@@ -155,7 +130,7 @@ const LogInModal = (props) => {
                   </div>
                 </div>
               </button>
-              <button
+              {/* <button
                 className="w-full h-11 bg-[#03C75A] rounded-lg flex justify-center items-center gap-2.5"
                 onClick={handleNaverLogin}
               >
@@ -176,7 +151,7 @@ const LogInModal = (props) => {
                     카카오로 시작하기
                   </div>
                 </div>
-              </button>
+              </button> */}
             </div>
             <div className="text-center font-['Pretendard'] text-neutral-700">
               회원이 아니신가요?

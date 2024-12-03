@@ -20,13 +20,14 @@ export const signUp = async (data) => {
 };
 
 export const getUser = async () => {
-  const response = await instanceWithToken.get("/user/auth/");
-  if (response.status === 200) {
+  try {
+    const response = await instanceWithToken.get("/user/auth/");
     console.log("USER GET SUCCESS");
-  } else {
-    console.log("[ERROR] error while getting user");
+    return response.data;
+  } catch (error) {
+    console.error("[ERROR] error while getting user:", error);
+    throw error;
   }
-  return response.data;
 };
 
 // Assignments 관련 API들
@@ -143,14 +144,16 @@ export const updatePaperInfo = async (paper_id, data) => {
 // PaperInfos 사람이 조회, 수정, 삭제 관련 API들
 
 export const getPaperInfos = async (assignment_id) => {
-  const response = await instanceWithToken.get(
-    `/paperinfo/assignment/${assignment_id}/`
-  );
-  if (response.status === 200) {
-    console.log("PAPERINFOS GET SUCCESS");
-    return response.data;
-  } else {
-    console.log("[ERROR] error while getting PAPERINFOS");
+  try {
+    const response = await instanceWithToken.get(`/paperinfo/assignment/${assignment_id}/`);
+    if (response.status === 200) {
+      console.log("PAPERINFOS GET SUCCESS");
+      return response.data;
+    }
+    throw new Error("Failed to get paper infos");
+  } catch (error) {
+    console.error("[ERROR] error while getting PAPERINFOS:", error);
+    throw error;
   }
 };
 
@@ -217,16 +220,24 @@ export const testUploadPaper = async (formData, config) => {
 
 // 소셜 로그인 API들
 export const googleSignIn = async () => {
-  const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/google/`;
+  const backendUrl = process.env.NODE_ENV === 'production' 
+    ? 'http://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com'
+    : 'http://localhost:8000';
+    
+  console.log('[GoogleSignIn] Environment:', process.env.NODE_ENV);
+  console.log('[GoogleSignIn] Backend URL:', backendUrl);
+  
+  const redirectUri = `${backendUrl}/api/user/google/login/`;
+  console.log('[GoogleSignIn] Redirect URI:', redirectUri);
   window.location.href = redirectUri;
 };
 
 export const naverSignIn = async () => {
-  const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/naver/`;
+  const redirectUri = `${process.env.REACT_APP_API_URL}/user/naver/login/`;
   window.location.href = redirectUri;
 };
 
 export const kakaoSignIn = async () => {
-  const redirectUri = `${process.env.REACT_APP_API_URL}/user/auth/kakao/`;
+  const redirectUri = `${process.env.REACT_APP_API_URL}/user/kakao/login/`;
   window.location.href = redirectUri;
 };

@@ -75,26 +75,6 @@ const SignUpModal = ( props ) => {
     }
   }
 
-  const handleNaverLogin = async(e) => {
-    e.preventDefault();
-    try {
-      await naverSignIn();
-    } catch (error) {
-      console.error('Error signing up with Naver:', error);
-      setErrorAlertModalIsOpen(true);
-    }
-  } 
-
-  const handleKakaoLogin = async(e) => {
-    e.preventDefault();
-    try {
-      await kakaoSignIn();
-    } catch (error) {
-      console.error('Error signing up with Kakao:', error);
-      setErrorAlertModalIsOpen(true);
-    }
-  } 
-
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 z-50">
       <div className="w-[400px] h-100% px-[30px] pt-6 pb-[30px] bg-neutral-50 rounded-[20px] flex-col justify-center items-center gap-[7px] inline-flex">
@@ -148,7 +128,7 @@ const SignUpModal = ( props ) => {
                   </div>
                 </div>
               </button>
-              <button
+              {/* <button
                 className="w-full h-11 bg-[#03C75A] rounded-lg flex justify-center items-center gap-2.5"
                 onClick={handleNaverLogin}
               >
@@ -169,7 +149,7 @@ const SignUpModal = ( props ) => {
                     카카오로 시작하기
                   </div>
                 </div>
-              </button>
+              </button> */}
             </div>
             <div className="text-center font-['Pretendard'] text-neutral-700">
               이미 계정이 있으신가요?
