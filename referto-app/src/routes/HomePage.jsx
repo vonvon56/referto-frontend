@@ -23,8 +23,13 @@ const HomePage = (props) => {
     setIsDetailPage(false);
     if (assignmentId) {
       const getReferencesAPI = async () => {
-        const references = await getPaperInfos(assignmentId);
-        setReferencesList(references);
+        try {
+          const paperInfos = await getPaperInfos(assignmentId);
+          console.log("Paper Infos:", paperInfos);
+          setReferencesList(paperInfos);
+        } catch (error) {
+          console.error("Error fetching paper infos:", error);
+        }
       };
       getReferencesAPI();
       
