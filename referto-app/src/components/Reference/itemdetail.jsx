@@ -160,7 +160,7 @@ const ReferenceItemDetail = ({
             <textarea
               value={content}
               onChange={handleChange}
-              className="border-2 border-neutral-300 rounded-md w-full px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none text-sm sm:text-md"
+              className="border-2 border-neutral-300 rounded-md w-full px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none text-md sm:text-lg"
               ref={inputRef}
               onKeyDown={handleKeyDown}
             />
@@ -203,37 +203,37 @@ const ReferenceItemDetail = ({
         {isMenuOpen && (
           <div 
             ref={menuRef}
-            className="absolute right-0 top-6 w-[120px] bg-white rounded-lg shadow-lg py-1 z-10"
+            className="w-[100px] absolute right-0 top-6 bg-white rounded-lg shadow-lg p-1 z-10"
           >
             <div 
-              className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2 hover:bg-neutral-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 handleEditContent();
                 setIsMenuOpen(false);
               }}
             >
               <Pencil className="w-4 h-4 text-neutral-500" />
-              <span className="text-sm text-neutral-700">수정</span>
+              <span className="text-sm text-neutral-700 font-medium font-['Pretendard']">수정</span>
             </div>
             <div 
-              className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2 hover:bg-neutral-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 handleCopy();
                 setIsMenuOpen(false);
               }}
             >
               <Copy className="w-4 h-4 text-neutral-500" />
-              <span className="text-sm text-neutral-700">복사</span>
+              <span className="text-sm text-neutral-700 font-medium font-['Pretendard']">복사</span>
             </div>
             <div 
-              className="px-3 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2 hover:bg-neutral-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 setDeleteModalIsOpen(true);
                 setIsMenuOpen(false);
               }}
             >
               <Trash2 className="w-4 h-4 text-red-400" />
-              <span className="text-sm text-red-400">삭제</span>
+              <span className="text-sm text-red-400 font-medium font-['Pretendard']">삭제</span>
             </div>
           </div>
         )}

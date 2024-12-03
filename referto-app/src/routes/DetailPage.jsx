@@ -74,7 +74,6 @@ const DetailPage = ({ setIsDetailPage }) => {
 
   return (
     <div className="w-full h-screen overflow-y-auto">
-      {/* Header (not sticky anymore) */}
       <div className="bg-white px-4 sm:px-[100px] pt-6 sm:pt-[50px]">
         <ReferenceItemDetail
           index={index}
@@ -114,12 +113,15 @@ const DetailPage = ({ setIsDetailPage }) => {
           {/* Mobile Memo Handler */}
           <div className="lg:hidden fixed bottom-0 left-0 right-0 flex flex-col items-center">
             <button
-              className="bg-white w-full px-4 py-2 border-t-2 border-gray-200 rounded-t-2xl flex items-center justify-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]"
+              className="bg-white w-full px-4 py-4 border-t-2 border-gray-200 rounded-t-2xl flex items-center justify-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]"
               onClick={() => setIsMemoOpen(!isMemoOpen)}
             >
-              <div className="w-12 h-1 bg-gray-300 rounded-full mb-1" />
+              <div className="w-12 h-1 bg-gray-300 rounded-full" />
             </button>
           </div>
+
+          {/* Add padding at the bottom for mobile */}
+          <div className="lg:hidden h-16"></div>
 
           {/* Mobile Memo Modal */}
           {isMemoOpen && (
@@ -131,7 +133,7 @@ const DetailPage = ({ setIsDetailPage }) => {
                 >
                   <div className="w-12 h-1 bg-neutral-300 rounded-full" />
                 </button>
-                <ReferenceMemo paperId={paperId} content={content} />
+                <ReferenceMemo paperId={paperId} content={content} onClose={() => setIsMemoOpen(false)}/>
               </div>
             </div>
           )}

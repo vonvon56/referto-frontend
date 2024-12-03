@@ -44,7 +44,8 @@ instanceWithToken.interceptors.response.use(
       try {
         const refreshToken = getCookie("refresh_token");
         if (!refreshToken) {
-          throw new Error("No refresh token");
+          window.location.href = '/login';
+          return Promise.reject(error);
         }
 
         const response = await instance.post("/user/auth/refresh/", {
@@ -52,12 +53,16 @@ instanceWithToken.interceptors.response.use(
         });
 
         const newAccessToken = response.data.access;
+        localStorage.setItem('access_token', newAccessToken);
         document.cookie = `access_token=${newAccessToken}; path=/`;
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         
         return axios(originalRequest);
       } catch (refreshError) {
         console.error('Refresh token error:', refreshError);
+        localStorage.removeItem('access_token');
+        document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }

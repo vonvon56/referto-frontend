@@ -69,7 +69,12 @@ const LogInModal = (props) => {
   const handleGoogleLogin = async(e) => {
     e.preventDefault();
     try {
-      await googleSignIn();
+      const response = await googleSignIn();
+      if (response?.data?.token) {
+        // 토큰 저장
+        localStorage.setItem('access_token', response.data.token.access_token);
+        document.cookie = `refresh_token=${response.data.token.refresh_token}; path=/`;
+      }
       setIsUserLoggedIn(true);
     } catch (error) {
       console.error('Error logging in with Google:', error);
