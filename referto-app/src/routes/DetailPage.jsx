@@ -40,7 +40,7 @@ const DetailPage = ({ setIsDetailPage }) => {
 
   const handlePrevPage = () => {
     if (index > 1) {
-      const newReference = referencesList[index - 1];
+      const newReference = referencesList[index - 2];
       const newReferenceId = newReference["paperInfo_id"];
       navigate(`/${assignmentId}/${newReferenceId}`, {
         state: {
@@ -56,8 +56,8 @@ const DetailPage = ({ setIsDetailPage }) => {
   };
 
   const handleNextPage = () => {
-    if (index < referencesList.length - 1) {
-      const newReference = referencesList[index + 1];
+    if (index < referencesList.length) {
+      const newReference = referencesList[index];
       const newReferenceId = newReference["paperInfo_id"];
       navigate(`/${assignmentId}/${newReferenceId}`, {
         state: {
@@ -88,7 +88,7 @@ const DetailPage = ({ setIsDetailPage }) => {
           handleNextPage={handleNextPage}
         />
       </div>
-      
+
       {/* Main Content */}
       <div className="px-4 sm:px-[100px] pb-8 sm:pb-[100px]">
         <div className="w-full h-full flex flex-col lg:flex-row gap-4">
@@ -133,7 +133,11 @@ const DetailPage = ({ setIsDetailPage }) => {
                 >
                   <div className="w-12 h-1 bg-neutral-300 rounded-full" />
                 </button>
-                <ReferenceMemo paperId={paperId} content={content} onClose={() => setIsMemoOpen(false)}/>
+                <ReferenceMemo
+                  paperId={paperId}
+                  content={content}
+                  onClose={() => setIsMemoOpen(false)}
+                />
               </div>
             </div>
           )}
