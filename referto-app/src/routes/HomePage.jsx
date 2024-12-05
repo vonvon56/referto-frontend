@@ -67,9 +67,9 @@ const HomePage = (props) => {
   };
 
   return (
-    <div className="w-full flex h-[calc(100vh-55px)]">
+    <div className="w-full flex h-[calc(100vh-65px)]">
       <div className={`
-        fixed sm:sticky top-[55px] h-[calc(100vh-55px)]
+        fixed sm:sticky top-[65px] h-[calc(100vh-65px)]
         w-[200px] sm:w-[300px]
         flex flex-col items-start gap-[30px] sm:gap-[50px] 
         px-3 sm:px-[20px] py-5 sm:py-[30px] 

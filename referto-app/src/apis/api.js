@@ -249,8 +249,14 @@ export const googleSignIn = async () => {
 // };
 
 export const getNotes = async (paperId) => {
-  const response = await instanceWithToken.get(`/notes/${paperId}/`);
-  return response.data;
+  try {
+    const response = await instanceWithToken.get(`/notes/${paperId}/`);
+    console.log("API response for notes:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("[ERROR] error while getting notes:", error);
+    throw error;
+  }
 };
 export const createNote = async (paperId, data) => {
   const response = await instanceWithToken.post(`/notes/${paperId}/`, data);

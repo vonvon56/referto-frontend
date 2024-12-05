@@ -54,7 +54,7 @@ function App() {
   }
 
   return (
-    <div className="App h-screen flex flex-col w-full">
+    <div className="App h-screen flex flex-col w-full overflow-hidden">
       <BrowserRouter>
         <Header
           isUserLoggedIn={isUserLoggedIn}
@@ -64,7 +64,7 @@ function App() {
           showMenuButton={window.location.pathname.split('/').length === 2}
           isDetailPage={isDetailPage}
         />
-        <div className="flex-1 overflow-y-auto w-full">
+        <div className="flex-1 w-full overflow-hidden">
           <Routes>
             <Route
               path="/:assignmentId/:referenceId"

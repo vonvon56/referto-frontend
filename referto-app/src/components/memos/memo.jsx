@@ -52,7 +52,7 @@ const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
   };
 
   return (
-    <form ref={memoRef} className="form bsg-white h-full p-2 sm:p-4">
+    <form ref={memoRef} className="form bsg-white h-full py-2 sm:py-4">
       <div className="self-stretch flex justify-between items-center">
         <div className="grow shrink basis-0 h-100% flex items-center gap-[5px] sm:gap-[7px]">
           <NotepadText className="w-5 h-5 sm:w-6 sm:h-6 relative" />

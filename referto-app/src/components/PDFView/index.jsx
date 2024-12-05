@@ -1,96 +1,129 @@
 import React, { useState, useRef, useEffect } from "react";
 import { getNotes, createNote, deleteNote } from "../../apis/api";
-import { Trash2 } from "lucide-react";
 import {
   Worker,
   Viewer,
   SpecialZoomLevel,
   Button,
-  Position,
-  Tooltip,
 } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/highlight/lib/styles/index.css";
-import packageJson from "../../../package.json";
-import { highlightPlugin, MessageIcon } from "@react-pdf-viewer/highlight";
+import { highlightPlugin } from "@react-pdf-viewer/highlight";
+import { toolbarPlugin } from '@react-pdf-viewer/toolbar';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import packageJson from '../../../package.json';
 
-const PDFViewer = ({ pdfUrl, paperId }) => {
-  const pdfjsVersion = packageJson.dependencies["pdfjs-dist"];
-  const [message, setMessage] = useState(""); //현재 쓰고 있는 메시지
-  const [notes, setNotes] = useState([]); //전체 note list
+const PDFViewer = ({ pdfUrl, paperId, setNotes, notes, jumpToHighlightArea }) => {
+  const pdfjsVersion = packageJson.dependencies['pdfjs-dist'];
+  const [message, setMessage] = useState("");
   const noteEles = useRef(new Map());
   const [currentDoc, setCurrentDoc] = useState(null);
-  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
-    const getNoteAPI = async () => {
-      const notes = await getNotes(paperId);
-      setNotes(notes);
-      console.log(notes);
-    };
-    getNoteAPI();
-  }, [paperId]);
+    if (!notes || notes.length === 0) {
+      const getNoteAPI = async () => {
+        const notesData = await getNotes(paperId);
+        if (notesData) {
+          setNotes(Array.isArray(notesData) ? notesData : []);
+        }
+      };
+      getNoteAPI();
+    }
+  }, [paperId, setNotes, notes]);
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
+  const handleDocumentLoad = (e) => {
+    setCurrentDoc(e.doc);
+    if (currentDoc && currentDoc !== e.doc) {
+      setCurrentDoc(e.doc);
+    }
   };
 
-  const handleNoteDelete = async (noteId) => {
-    await deleteNote(noteId);
-    const updatedNotes = await getNotes(paperId);
-    setNotes(updatedNotes);
+  const scrollToHighlightArea = (highlightArea) => {
+    const pageIndex = highlightArea.pageIndex;
+    const pageElement = document.querySelector(`[data-testid="core__page-layer-${pageIndex}"]`);
+    const viewerContainer = document.querySelector('.rpv-core__viewer');
+    
+    if (!pageElement || !viewerContainer) {
+      // 요소가 아직 로드되지 않았다면, 약간의 지연 후 다시 시도
+      setTimeout(() => {
+        const retryPageElement = document.querySelector(`[data-testid="core__page-layer-${pageIndex}"]`);
+        const retryViewerContainer = document.querySelector('.rpv-core__viewer');
+        
+        if (retryPageElement && retryViewerContainer) {
+          const pageHeight = retryPageElement.offsetHeight;
+          const yOffset = (highlightArea.top / 100) * pageHeight;
+          
+          retryViewerContainer.scrollTo({
+            top: yOffset,
+            behavior: 'smooth'
+          });
+        }
+      }, 500); // 500ms 후 재시도
+      return;
+    }
+    
+    const pageHeight = pageElement.offsetHeight;
+    const yOffset = (highlightArea.top / 100) * pageHeight;
+    
+    viewerContainer.scrollTo({
+      top: yOffset,
+      behavior: 'smooth'
+    });
   };
+
+  const jumpToNote = (note) => {
+    if (noteEles.current.has(note.id)) {
+      noteEles.current.get(note.id).scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    if (jumpToHighlightArea) {
+      scrollToHighlightArea(jumpToHighlightArea);
+    }
+  }, [jumpToHighlightArea]);
 
   // Initialize the plugins
   const highlightPluginInstance = highlightPlugin({
-    renderHighlightTarget: ({ selectionRegion, toggle }) => (
-      <div
-        style={{
-          background: "#eee",
-          display: "flex",
-          position: "absolute",
-          left: `${selectionRegion.left}%`,
-          top: `${selectionRegion.top + selectionRegion.height}%`,
-          transform: "translate(0, 8px)",
-          zIndex: 1000,
-        }}
-      >
-        <Tooltip
-          position={Position.TopCenter}
-          target={
-            <Button
-              onClick={toggle}
-              style={{
-                background: "#E5E5E5",
-                color: "#171717",
-                borderRadius: "4px",
-                cursor: "pointer",
-                zIndex: 1000,
-              }}
-            >
-              <MessageIcon />
-            </Button>
-          }
-          content={() => (
-            <div
-              className="font-[Pretendard]"
-              style={{
-                width: "120px",
-                padding: "8px",
-                background: "white",
-                color: "#171717",
-              }}
-            >
-              메모 추가하기
-            </div>
-          )}
-          offset={{ left: 0, top: -8 }}
-        />
-      </div>
-    ),
+    renderHighlightTarget: ({ selectionRegion, toggle }) => {
+      if (selectionRegion.pageIndex === undefined) {
+        return null;
+      }
+      
+      return (
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid rgba(0, 0, 0, 0.2)",
+            borderRadius: "4px",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            padding: "8px",
+            position: "absolute",
+            left: `${selectionRegion.left}%`,
+            top: `${selectionRegion.top + selectionRegion.height}%`,
+            transform: "translate(0, 8px)",
+            zIndex: 1000,
+          }}
+        >
+          <Button
+            onClick={toggle}
+            style={{
+              background: "#E5E5E5",
+              color: "#171717",
+              borderRadius: "4px",
+              cursor: "pointer",
+              padding: "4px 8px",
+            }}
+          >
+            메모 추가
+          </Button>
+        </div>
+      );
+    },
     renderHighlightContent: ({
-      //interface for adding a note to the highlighted area.
       selectionRegion,
       highlightAreas,
       selectedText,
@@ -98,19 +131,36 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
     }) => {
       const addNote = async () => {
         if (message !== "") {
-          const note = {
+          // 페이지별로 하이라이트 영역 분리
+          const groupedHighlights = highlightAreas.reduce((acc, area) => {
+            const pageIndex = area.pageIndex;
+            if (!acc[pageIndex]) {
+              acc[pageIndex] = [];
+            }
+            acc[pageIndex].push(area);
+            return acc;
+          }, {});
+
+          // 각 페이지별로 노트 생성
+          const notes = Object.entries(groupedHighlights).map(([pageIndex, areas]) => ({
             content: message,
-            highlightAreas,
-            quote: selectedText,
-          };
-          await createNote(paperId, note);
-          setNotes((prevNotes) => [...prevNotes, note]);
+            highlightAreas: areas,
+            quote: selectedText, // 필요한 경우 페이지별로 quote도 분리
+            pageIndex: parseInt(pageIndex),
+          }));
+
+          // 각 노트를 개별적으로 저장
+          for (const note of notes) {
+            await createNote(paperId, note);
+          }
+
+          // 노트 목록 업데이트
+          const updatedNotes = await getNotes(paperId);
+          setNotes(updatedNotes);
           setMessage("");
           cancel();
         }
       };
-      //1. pdf 밑을 하이라이트하면 추가 버튼이 가려짐.
-      //2. 가끔씩 하이라이트하면 에러 뜸.
 
       return (
         <div
@@ -171,12 +221,12 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
     renderHighlights: ({ pageIndex, getCssProperties, rotation }) => (
       <div>
         {notes.map((note) => (
-          <React.Fragment key={note.id}>
+          <React.Fragment key={`note-${note.note_id}`}>
             {note.highlightAreas
               .filter((area) => area.pageIndex === pageIndex)
               .map((area, idx) => (
                 <div
-                  key={idx}
+                  key={`highlight-${note.note_id}-${idx}`}
                   style={{
                     background: "yellow",
                     opacity: 0.4,
@@ -194,96 +244,20 @@ const PDFViewer = ({ pdfUrl, paperId }) => {
     ),
   });
 
-  const handleDocumentLoad = (e) => {
-    setCurrentDoc(e.doc);
-    if (currentDoc && currentDoc !== e.doc) {
-      setNotes([]);
-    }
-  };
-
-  const jumpToHighlightArea = (highlightArea) => {
-    if (currentDoc) {
-      currentDoc.getPage(highlightArea.pageIndex + 1).then((pdfPage) => {
-        const viewport = pdfPage.getViewport({ scale: 1 });
-        const left = highlightArea.left * viewport.width;
-        const top = highlightArea.top * viewport.height;
-        window.scrollTo({
-          top,
-          left,
-          behavior: "smooth",
-        });
-      });
-    }
-  };
-
-  const jumpToNote = (note) => {
-    if (noteEles.current.has(note.id)) {
-      noteEles.current.get(note.id).scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const Sidebar = ({ notes, jumpToHighlightArea }) => (
-    <div className="w-[250px] h-100% text-neutral-900 font-[Pretendard] font-bold py-2 pl-3 overflowY-auto">
-      메모
-      {notes.map((note) => (
-        <div
-          key={note.note_id}
-          onClick={() => jumpToHighlightArea(note.highlightAreas[0])}
-          className="cursor-pointer p-4 pb-4 border-2 border-neutral-300 m-2 rounded-md shadow-md"
-        >
-          <div className="flex justify-end my-2">
-            <Trash2
-              className="text-red-400 w-4 h-4 mb-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleNoteDelete(note.note_id);
-                console.log(note.note_id);
-              }}
-            />
-          </div>
-          <div className="text-neutral-500 font-[Pretendard] font-medium">
-            {note.quote}
-          </div>
-          <div className="text-neutral-900 font-[Pretendard] font-medium">
-            {note.content}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   return (
-    <div style={{ display: "flex", width: "100%", height: "100vh" }}>
-      <div style={{ flex: 1, position: "relative" }}>
-        <Worker
-          workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.js`}
-        >
-          <Viewer
-            fileUrl={pdfUrl}
-            defaultScale={SpecialZoomLevel.PageFit}
-            plugins={[highlightPluginInstance]}
-            onDocumentLoad={handleDocumentLoad}
-          />
-        </Worker>
-        <button
-          onClick={toggleSidebar}
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            padding: "8px 12px",
-            background: "#171717",
-            color: "#fff",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          {showSidebar ? "메모 닫기" : "메모 보기"}
-        </button>
-      </div>
-      {showSidebar && (
-        <Sidebar notes={notes} jumpToHighlightArea={jumpToHighlightArea} />
-      )}
+    <div style={{ width: "100%", height: "100vh" }}>
+      <Worker
+        workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.js`}
+      >
+        <Viewer
+          fileUrl={pdfUrl}
+          defaultScale={SpecialZoomLevel.PageFit}
+          plugins={[highlightPluginInstance, defaultLayoutPluginInstance]}
+          onDocumentLoad={handleDocumentLoad}
+        />
+      </Worker>
     </div>
   );
 };
