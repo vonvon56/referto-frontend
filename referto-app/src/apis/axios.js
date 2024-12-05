@@ -2,7 +2,7 @@ import axios from "axios";
 import { getCookie } from "../utils/cookie";
 
 const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'http://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com/api'
+  ? 'https://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com/api'
   : 'http://localhost:8000/api';
 
 // Update base URL configuration

@@ -221,7 +221,7 @@ export const testUploadPaper = async (formData, config) => {
 // 소셜 로그인 API들
 export const googleSignIn = async () => {
   const backendUrl = process.env.NODE_ENV === 'production' 
-    ? 'http://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com'
+    ? 'https://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com'
     : 'http://localhost:8000';
     
   console.log('[GoogleSignIn] Environment:', process.env.NODE_ENV);
