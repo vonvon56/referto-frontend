@@ -66,21 +66,21 @@ const LogInModal = (props) => {
     }
   };
 
-  const handleGoogleLogin = async(e) => {
+  const handleGoogleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await googleSignIn();
-      if (response?.data?.token) {
-        // 토큰 저장
-        localStorage.setItem('access_token', response.data.token.access_token);
-        document.cookie = `refresh_token=${response.data.token.refresh_token}; path=/`;
+    googleSignIn();
+
+    const checkToken = () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        setIsUserLoggedIn(true);
+      } else {
+        setErrorAlertModalIsOpen(true);
       }
-      setIsUserLoggedIn(true);
-    } catch (error) {
-      console.error('Error logging in with Google:', error);
-      setErrorAlertModalIsOpen(true);
-    }
-  }
+    };
+
+    setTimeout(checkToken, 2000);
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex flex-column items-center justify-center bg-gray-200 z-50">

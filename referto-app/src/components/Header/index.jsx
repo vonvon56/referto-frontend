@@ -14,14 +14,9 @@ const Header = ( props ) => {
   const [firstAssignmentId, setFirstAssignmentId] = useState('')
   const navigate = useNavigate()
   const [user, setUser] = useState("null");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
-      setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-      setIsModalOpen(false);
+    navigate('/account/login');
   };
 
   useEffect(() => {
@@ -123,10 +118,6 @@ const Header = ( props ) => {
               >
                 로그인
               </div>
-              {isModalOpen && <LogInModal 
-                onClose={handleCloseModal}
-                isUserLoggedIn={isUserLoggedIn}
-                setIsUserLoggedIn={setIsUserLoggedIn} />}
             </div>
           )}
         </div>
