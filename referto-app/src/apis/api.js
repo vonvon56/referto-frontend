@@ -145,7 +145,9 @@ export const updatePaperInfo = async (paper_id, data) => {
 
 export const getPaperInfos = async (assignment_id) => {
   try {
-    const response = await instanceWithToken.get(`/paperinfo/assignment/${assignment_id}/`);
+    const response = await instanceWithToken.get(
+      `/paperinfo/assignment/${assignment_id}/`
+    );
     if (response.status === 200) {
       console.log("PAPERINFOS GET SUCCESS");
       return response.data;
@@ -202,11 +204,14 @@ export const updateMemo = async (paperId, data) => {
   }
 };
 
-
 // 랜딩 페이지 테스트 api
 export const testUploadPaper = async (formData, config) => {
   try {
-    const response = await instance.post("/papers/landingpage/", formData, config);
+    const response = await instance.post(
+      "/papers/landingpage/",
+      formData,
+      config
+    );
     if (response.status === 200 || response.status === 201) {
       console.log("TEST PAPER UPLOAD SUCCESS");
       return response;
@@ -220,15 +225,16 @@ export const testUploadPaper = async (formData, config) => {
 
 // 소셜 로그인 API들
 export const googleSignIn = async () => {
-  const backendUrl = process.env.NODE_ENV === 'production' 
-    ? 'http://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com'
-    : 'http://localhost:8000';
-    
-  console.log('[GoogleSignIn] Environment:', process.env.NODE_ENV);
-  console.log('[GoogleSignIn] Backend URL:', backendUrl);
-  
+  const backendUrl =
+    process.env.NODE_ENV === "production"
+      ? "http://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com"
+      : "http://localhost:8000";
+
+  console.log("[GoogleSignIn] Environment:", process.env.NODE_ENV);
+  console.log("[GoogleSignIn] Backend URL:", backendUrl);
+
   const redirectUri = `${backendUrl}/api/user/google/login/`;
-  console.log('[GoogleSignIn] Redirect URI:', redirectUri);
+  console.log("[GoogleSignIn] Redirect URI:", redirectUri);
   window.location.href = redirectUri;
 };
 
@@ -240,4 +246,27 @@ export const naverSignIn = async () => {
 export const kakaoSignIn = async () => {
   const redirectUri = `${process.env.REACT_APP_API_URL}/user/kakao/login/`;
   window.location.href = redirectUri;
+};
+
+export const getNotes = async (paperId) => {
+  const response = await instanceWithToken.get(`/notes/${paperId}/`);
+  return response.data;
+};
+export const createNote = async (paperId, data) => {
+  const response = await instanceWithToken.post(`/notes/${paperId}/`, data);
+  if (response.status === 201) {
+    console.log("NOTE CREATE SUCCESS");
+    return response.data;
+  } else {
+    console.log("[ERROR] error while creating note");
+  }
+};
+
+export const deleteNote = async (noteId) => {
+  const response = await instanceWithToken.delete(`/notes/detail/${noteId}/`);
+  if (response.status === 204) {
+    console.log("NOTE DELETE SUCCESS");
+  } else {
+    console.log("[ERROR] error while deleting note");
+  }
 };

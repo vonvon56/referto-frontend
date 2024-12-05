@@ -96,7 +96,7 @@ const DetailPage = ({ setIsDetailPage }) => {
           <div className="w-full lg:w-2/3 p-3 sm:p-5">
             <div className="w-full h-full rounded-lg border border-neutral-400 p-2 sm:p-3">
               {paperUrl ? (
-                <PDFViewer pdfUrl={paperUrl} />
+                <PDFViewer pdfUrl={paperUrl} paperId={paperId} />
               ) : (
                 <div className="text-sm sm:text-base">파일 로딩 중...</div>
               )}
