@@ -125,19 +125,27 @@ const SidebarItem = ({
     }
   };
 
-  const assignmentMenuOptions = [
-    {
-      icon: <Pencil className="w-4 h-4 text-neutral-500" />,
-      label: "수정",
-      onClick: () => setIsEdit(true)
-    },
-    {
-      icon: <Trash2 className="w-4 h-4 text-red-400" />,
-      label: "삭제",
-      textColor: "text-red-400",
-      onClick: () => setDeleteModalIsOpen(true)
-    }
-  ];
+  const assignmentMenuOptions = assignmentsList.length === 1 
+    ? [
+        {
+          icon: <Pencil className="w-4 h-4 text-neutral-500" />,
+          label: "수정",
+          onClick: () => setIsEdit(true)
+        }
+      ]
+    : [
+        {
+          icon: <Pencil className="w-4 h-4 text-neutral-500" />,
+          label: "수정",
+          onClick: () => setIsEdit(true)
+        },
+        {
+          icon: <Trash2 className="w-4 h-4 text-red-400" />,
+          label: "삭제",
+          textColor: "text-red-400",
+          onClick: () => setDeleteModalIsOpen(true)
+        }
+      ];
 
   return (
     <div

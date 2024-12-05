@@ -1,13 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NotepadText, Copy } from "lucide-react";
 import { getMemo, updateMemo } from "../../apis/api";
 import SuccessModal from "../Modals/SuccessModal";
 
-const ReferenceMemo = ({ content, paperId }) => {
+const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
   const [memoContent, setMemoContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [copySuccessModalIsOpen, setCopySuccessModalIsOpen] = useState(false);
-  //const [saveSuccessModalIsOpen, setSaveSuccessModalIsOpen] = useState(false);
+  const memoRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (memoRef.current && !memoRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
 
   useEffect(() => {
     const getMemoAPI = async () => {
@@ -38,16 +51,8 @@ const ReferenceMemo = ({ content, paperId }) => {
     setCopySuccessModalIsOpen(true);
   };
 
-  // const onSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const response = await updateMemo(paperId, { content: memoContent });
-  //   window.location.reload();
-  //   setSaveSuccessModalIsOpen(true);
-  //   //setMemoContent(response);
-  // };
-
   return (
-    <form className="form bsg-white h-full p-2 sm:p-4">
+    <form ref={memoRef} className="form bsg-white h-full p-2 sm:p-4">
       <div className="self-stretch flex justify-between items-center">
         <div className="grow shrink basis-0 h-100% flex items-center gap-[5px] sm:gap-[7px]">
           <NotepadText className="w-5 h-5 sm:w-6 sm:h-6 relative" />
@@ -69,14 +74,14 @@ const ReferenceMemo = ({ content, paperId }) => {
           cols="40"
         />
       </div>
-      <div className="self-stretch justify-end items-center gap-[10px] sm:gap-[15px] inline-flex w-full mt-2">
+      <div className="self-stretch justify-end items-center gap-[10px] sm:gap-[15px] inline-flex w-full">
         <div className="grow shrink basis-0 h-9 sm:h-10 justify-end items-center gap-[18px] flex">
           <button
             onClick={handleCopy}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-neutral-900 rounded-md justify-center items-center gap-2 sm:gap-2.5 flex"
+            className="px-2.5 sm:px-2.5 py-1.5 sm:py-1.5 bg-neutral-900 rounded-md justify-center items-center gap-2 sm:gap-2 flex"
           >
-            <Copy className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] relative text-white" />
-            <div className="text-right text-white text-base sm:text-lg font-medium font-['Pretendard'] leading-normal">
+            <Copy className="w-4 sm:w-4 h-4 sm:h-4 relative text-white" />
+            <div className="text-right text-white text-base sm:text-base font-medium font-['Pretendard'] leading-normal">
               복사
             </div>
           </button>

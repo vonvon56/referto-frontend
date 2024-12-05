@@ -188,7 +188,7 @@ const LandingPage = () => {
                     backgroundColor: "rgba(255, 255, 255, 0.95)",
                     transition: { duration: 0.2 }
                   }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm cursor-pointer"
+                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
                 >
                   <div className="font-medium mb-2 text-neutral-900">APA</div>
                   <div className="text-neutral-800">{ref.APA}</div>
@@ -199,7 +199,7 @@ const LandingPage = () => {
                     backgroundColor: "rgba(255, 255, 255, 0.95)",
                     transition: { duration: 0.2 }
                   }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm cursor-pointer"
+                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
                 >
                   <div className="font-medium mb-2 text-neutral-900">MLA</div>
                   <div className="text-neutral-800">{ref.MLA}</div>
@@ -210,7 +210,7 @@ const LandingPage = () => {
                     backgroundColor: "rgba(255, 255, 255, 0.95)",
                     transition: { duration: 0.2 }
                   }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm cursor-pointer"
+                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
                 >
                   <div className="font-medium mb-2 text-neutral-900">Chicago</div>
                   <div className="text-neutral-800">{ref.Chicago}</div>
@@ -221,7 +221,7 @@ const LandingPage = () => {
                     backgroundColor: "rgba(255, 255, 255, 0.95)",
                     transition: { duration: 0.2 }
                   }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm cursor-pointer"
+                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
                 >
                   <div className="font-medium mb-2 text-neutral-900">Vancouver</div>
                   <div className="text-neutral-800">{ref.Vancouver}</div>

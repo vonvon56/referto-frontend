@@ -1,4 +1,4 @@
-import { Copy, Upload } from "lucide-react";
+import { Copy, Upload, ArrowUpDown } from "lucide-react";
 import ReferenceList from "../components/Reference/list";
 import SidebarList from "../components/Sidebar/list";
 import FileUploadModal from "../components/Modals/FileUpload";
@@ -23,8 +23,13 @@ const HomePage = (props) => {
     setIsDetailPage(false);
     if (assignmentId) {
       const getReferencesAPI = async () => {
-        const references = await getPaperInfos(assignmentId);
-        setReferencesList(references);
+        try {
+          const paperInfos = await getPaperInfos(assignmentId);
+          console.log("Paper Infos:", paperInfos);
+          setReferencesList(paperInfos);
+        } catch (error) {
+          console.error("Error fetching paper infos:", error);
+        }
       };
       getReferencesAPI();
 
@@ -53,13 +58,21 @@ const HomePage = (props) => {
     setCopySuccessModalIsOpen(true);
   };
 
+  const handleSortReferences = () => {
+    const sortedList = [...referencesList].sort((a, b) => {
+      if (!a[selectedStyleName] || !b[selectedStyleName]) return 0;
+      return a[selectedStyleName].localeCompare(b[selectedStyleName]);
+    });
+    setReferencesList(sortedList);
+  };
+
   return (
     <div className="w-full flex h-[calc(100vh-55px)]">
       <div className={`
         fixed sm:sticky top-[55px] h-[calc(100vh-55px)]
         w-[200px] sm:w-[300px]
         flex flex-col items-start gap-[30px] sm:gap-[50px] 
-        px-3 sm:pl-[20px] sm:pr-[10px] py-5 sm:py-[30px] 
+        px-3 sm:px-[20px] py-5 sm:py-[30px] 
         bg-neutral-200
         transition-transform duration-300
         sm:translate-x-0
@@ -124,7 +137,11 @@ const HomePage = (props) => {
                 참고문헌
               </div>
             </div>
-            <div className="w-8 sm:w-11 self-stretch px-2 sm:px-2.5 justify-start items-center gap-[10px] sm:gap-[15px] flex">
+            <div className="w-16 sm:w-20 self-stretch px-2 sm:px-2.5 justify-start items-center gap-[10px] sm:gap-[15px] flex">
+              <ArrowUpDown
+                className="text-neutral-500 w-4 sm:w-6 h-4 sm:h-6 relative cursor-pointer"
+                onClick={handleSortReferences}
+              />
               <Copy
                 className="text-neutral-500 w-4 sm:w-6 h-4 sm:h-6 relative cursor-pointer"
                 onClick={handleCopyAll}

@@ -164,12 +164,12 @@ const ReferenceItem = ({
             <textarea
               value={content}
               onChange={handleChange}
-              className="border-2 border-neutral-300 rounded-md w-full h-100% px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none text-sm sm:text-md"
+              className="border-2 border-neutral-300 rounded-md w-full h-100% px-1 py-1 focus:outline-none focus:border-neutral-500 resize-none text-md sm:text-lg"
               ref={inputRef}
               onKeyDown={handleKeyDown}
             />
           ) : (
-            <div className="break-words whitespace-pre-wrap">{content}</div>
+            <div className="break-words whitespace-pre-wrap cursor-pointer">{content}</div>
           )}
         </div>
         <div className="hidden sm:flex w-[83px] self-stretch px-2.5 justify-start items-center gap-[15px] cursor-pointer">
@@ -192,12 +192,12 @@ const ReferenceItem = ({
       </div>
       <div
         onClick={handleClickView}
-        className={`hidden sm:flex px-2 sm:px-3 py-1.5 sm:py-2 bg-neutral-900 rounded-md justify-center items-center gap-1.5 sm:gap-2.5 cursor-pointer`}
+        className={`hidden sm:flex px-2 sm:px-2.5 py-1 sm:py-1.5 bg-neutral-900 rounded-md justify-center items-center gap-1.5 sm:gap-2 cursor-pointer`}
       >
-        <div className="justify-center items-center gap-1.5 sm:gap-2.5 flex">
-          <Eye className="text-white w-4 sm:w-[18px] h-4 sm:h-[18px] relative" />
+        <div className="justify-center items-center gap-1.5 sm:gap-2 flex">
+          <Eye className="text-white w-3.5 sm:w-4 h-3.5 sm:h-4 relative" />
         </div>
-        <div className="text-right text-white text-sm sm:text-lg font-medium font-['Pretendard'] leading-normal">
+        <div className="text-right text-white text-sm sm:text-base font-medium font-['Pretendard'] leading-normal">
           보기
         </div>
       </div>
@@ -218,10 +218,10 @@ const ReferenceItem = ({
         {isMenuOpen && (
           <div 
             ref={menuRef}
-            className="w-[90px] absolute right-0 top-6 bg-white rounded-lg shadow-lg py-1 z-10"
+            className="w-[100px] absolute right-0 top-6 bg-white rounded-lg shadow-lg p-1 z-10"
           >
             <div 
-              className="px-5 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2 hover:bg-neutral-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 handleEditContent();
                 setIsMenuOpen(false);
@@ -231,7 +231,7 @@ const ReferenceItem = ({
               <span className="text-sm text-neutral-700 font-medium font-['Pretendard']">수정</span>
             </div>
             <div 
-              className="px-5 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2 hover:bg-neutral-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 handleCopy();
                 setIsMenuOpen(false);
@@ -241,7 +241,7 @@ const ReferenceItem = ({
               <span className="text-sm text-neutral-700 font-medium font-['Pretendard']">복사</span>
             </div>
             <div 
-              className="px-5 py-2 hover:bg-neutral-100 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2 hover:bg-neutral-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
               onClick={() => {
                 setDeleteModalIsOpen(true);
                 setIsMenuOpen(false);

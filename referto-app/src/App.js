@@ -14,30 +14,50 @@ import LandingPage from "./routes/LandingPage";
 import { getUser, getAssignments } from "./apis/api";
 import LogInModal from "./components/Modals/LogIn";
 import SignUpModal from "./components/Modals/SignUp";
+import GoogleCallback from "./components/Auth/GoogleCallback";
 
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [firstAssignmentId, setFirstAssignmentId] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDetailPage, setIsDetailPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
+        const accessToken = localStorage.getItem('access_token');
+        
+        if (!accessToken) {
+          setIsUserLoggedIn(false);
+          return;
+        }
+
         const user = await getUser();
-        setIsUserLoggedIn(true);
-        if (user && user.email) {
-          const assignments = await getAssignments(user.email);
-          if (assignments.length > 0) {
-            setFirstAssignmentId(assignments[0]["assignment_id"]);
+        if (user) {
+          setIsUserLoggedIn(true);
+          const assignments = await getAssignments();
+          if (assignments && assignments.length > 0) {
+            setFirstAssignmentId(assignments[0].assignment_id);
           }
         }
       } catch (error) {
+        console.error('Authentication error:', error);
         setIsUserLoggedIn(false);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+      } finally {
+        setIsLoading(false);
       }
     };
+
     fetchData();
   }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="App h-screen flex flex-col w-full">
@@ -97,7 +117,8 @@ function App() {
                   />
                 )
               }
-            />
+            />    
+            <Route path="/google/callback" element={<GoogleCallback setIsUserLoggedIn={setIsUserLoggedIn} />} />
           </Routes>
         </div>
       </BrowserRouter>
