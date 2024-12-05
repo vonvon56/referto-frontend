@@ -238,15 +238,15 @@ export const googleSignIn = async () => {
   window.location.href = redirectUri;
 };
 
-export const naverSignIn = async () => {
-  const redirectUri = `${process.env.REACT_APP_API_URL}/user/naver/login/`;
-  window.location.href = redirectUri;
-};
+// export const naverSignIn = async () => {
+//   const redirectUri = `${process.env.REACT_APP_API_URL}/user/naver/login/`;
+//   window.location.href = redirectUri;
+// };
 
-export const kakaoSignIn = async () => {
-  const redirectUri = `${process.env.REACT_APP_API_URL}/user/kakao/login/`;
-  window.location.href = redirectUri;
-};
+// export const kakaoSignIn = async () => {
+//   const redirectUri = `${process.env.REACT_APP_API_URL}/user/kakao/login/`;
+//   window.location.href = redirectUri;
+// };
 
 export const getNotes = async (paperId) => {
   const response = await instanceWithToken.get(`/notes/${paperId}/`);
