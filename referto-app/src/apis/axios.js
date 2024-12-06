@@ -2,7 +2,7 @@ import axios from "axios";
 import { getCookie } from "../utils/cookie";
 
 const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://ec2-43-201-56-176.ap-northeast-2.compute.amazonaws.com/api'
+  ? 'https://api.referto.site/api'
   : 'http://localhost:8000/api';
 
 // 토큰 갱신 중인지 확인하는 플래그
