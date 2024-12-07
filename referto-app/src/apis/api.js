@@ -2,10 +2,15 @@ import { instance, instanceWithToken } from "./axios";
 
 // User 관련 API들
 export const signIn = async (data) => {
-  const response = await instance.post("/user/auth/", data);
-  if (response.status === 200) {
-  } else {
-    console.log("[ERROR] error while signing in");
+  try {
+    const response = await instance.post("/user/auth/", data);
+    if (response.status === 200) {
+      return response.data;
+    }
+    throw new Error('Login failed');
+  } catch (error) {
+    console.error("[ERROR] error while signing in:", error.response?.data || error.message);
+    throw error;
   }
 };
 
@@ -229,7 +234,7 @@ export const googleSignIn = async () => {
     ? 'https://api.referto.site'
     : 'http://localhost:8000';
     
-  const redirectUri = `${backendUrl}/api/user/google/login/`;
+  const redirectUri = `${backendUrl}/api/user/google/login`;
   window.location.href = redirectUri;
 };
 

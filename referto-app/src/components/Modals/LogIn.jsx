@@ -57,11 +57,13 @@ const LogInModal = (props) => {
   const handleLogInSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signIn(logInData);
+      console.log("Sending login data:", logInData);  // 디버그 로그
+      const response = await signIn(logInData);
+      console.log("Login response:", response);  // 디버그 로그
       setIsUserLoggedIn(true);
       handleRedirect();
     } catch (error) {
-      console.error("Error logging in:", error.message);
+      console.error("Error logging in:", error.response?.data || error.message);
       setErrorAlertModalIsOpen(true);
     }
   };
