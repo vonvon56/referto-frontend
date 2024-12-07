@@ -31,7 +31,7 @@ export const instance = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'X-CSRFToken': getCookie("csrftoken"),
-    'Access-Control-Allow-Credentials': 'true',
+    'Accept': 'application/json',
   }
 });
 
@@ -41,7 +41,7 @@ export const instanceWithToken = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'X-CSRFToken': getCookie("csrftoken"),
-    'Access-Control-Allow-Credentials': 'true',
+    'Accept': 'application/json',
   }
 });
 
@@ -51,9 +51,17 @@ instanceWithToken.interceptors.request.use(
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
-    if (process.env.NODE_ENV === 'production' && !config.url.startsWith('https://')) {
+    
+    // Ensure proper protocol in production
+    if (process.env.NODE_ENV === 'production') {
       config.url = config.url.replace('http://', 'https://');
     }
+    
+    // Add origin header in production
+    if (process.env.NODE_ENV === 'production') {
+      config.headers['Origin'] = 'https://www.referto.site';
+    }
+    
     return config;
   },
   (error) => Promise.reject(error)

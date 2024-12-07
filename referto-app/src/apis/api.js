@@ -15,13 +15,16 @@ export const signIn = async (data) => {
 };
 
 export const signUp = async (data) => {
-  const response = await instance.post("/user/register/", data);
-  if (response.status === 200 || response.status === 201) {
-    return response.data;
-  } else {
-    console.log("[ERROR] error while signing up");
+  try {
+    const response = await instance.post("/user/register/", data);
+    if (response.status === 200 || response.status === 201) {
+      return response.data;
+    }
+    throw new Error('Signup failed');
+  } catch (error) {
+    console.error("[ERROR] error while signing up:", error.response?.data || error.message);
+    throw error;
   }
-  return response;
 };
 
 export const getUser = async () => {
@@ -37,12 +40,16 @@ export const getUser = async () => {
 
 // Assignments 관련 API들
 export const getAssignments = async () => {
-  const response = await instanceWithToken.get("/assignments/");
-  if (response.status === 200) {
-    console.log("ASSIGNMENTS GET SUCCESS");
-    return response.data;
-  } else {
-    console.log("[ERROR] error while getting assignments");
+  try {
+    const response = await instanceWithToken.get("/assignments/");
+    if (response.status === 200) {
+      console.log("ASSIGNMENTS GET SUCCESS");
+      return response.data;
+    }
+    throw new Error('Failed to get assignments');
+  } catch (error) {
+    console.error("[ERROR] error while getting assignments:", error.response?.data || error.message);
+    throw error;
   }
 };
 
@@ -88,12 +95,16 @@ export const getAssignment = async (id) => {
 // Papers 관련 API
 
 export const uploadPaper = async (formData, config) => {
-  const response = await instanceWithToken.post("/papers/", formData, config);
-  if (response.status === 201) {
-    console.log("PAPER UPLOAD SUCCESS");
-    return response.data;
-  } else {
-    console.log("[ERROR] error while uploading paper");
+  try {
+    const response = await instanceWithToken.post("/papers/", formData, config);
+    if (response.status === 201) {
+      console.log("PAPER UPLOAD SUCCESS");
+      return response.data;
+    }
+    throw new Error('Failed to upload paper');
+  } catch (error) {
+    console.error("[ERROR] error while uploading paper:", error.response?.data || error.message);
+    throw error;
   }
 };
 
