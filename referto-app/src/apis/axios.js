@@ -30,7 +30,8 @@ export const instance = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'X-CSRFToken': getCookie("csrftoken")
+    'X-CSRFToken': getCookie("csrftoken"),
+    'Access-Control-Allow-Credentials': 'true',
   }
 });
 
@@ -39,7 +40,8 @@ export const instanceWithToken = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'X-CSRFToken': getCookie("csrftoken")
+    'X-CSRFToken': getCookie("csrftoken"),
+    'Access-Control-Allow-Credentials': 'true',
   }
 });
 
@@ -48,6 +50,9 @@ instanceWithToken.interceptors.request.use(
     const accessToken = localStorage.getItem('access_token') || getCookie("access_token");
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    if (process.env.NODE_ENV === 'production' && !config.url.startsWith('https://')) {
+      config.url = config.url.replace('http://', 'https://');
     }
     return config;
   },
@@ -62,7 +67,9 @@ instanceWithToken.interceptors.response.use(
     // 네트워크 에러 처리
     if (!error.response) {
       console.error('Network error:', error);
-      window.location.replace('/account/login');
+      if (process.env.NODE_ENV === 'production') {
+        window.location.replace('/account/login');
+      }
       return Promise.reject(error);
     }
 

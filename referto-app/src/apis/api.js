@@ -229,11 +229,7 @@ export const googleSignIn = async () => {
     ? 'https://api.referto.site'
     : 'http://localhost:8000';
     
-  console.log('[GoogleSignIn] Environment:', process.env.NODE_ENV);
-  console.log('[GoogleSignIn] Backend URL:', backendUrl);
-
   const redirectUri = `${backendUrl}/api/user/google/login/`;
-  console.log("[GoogleSignIn] Redirect URI:", redirectUri);
   window.location.href = redirectUri;
 };
 
