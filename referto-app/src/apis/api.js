@@ -241,12 +241,25 @@ export const testUploadPaper = async (formData, config) => {
 
 // 소셜 로그인 API들
 export const googleSignIn = async () => {
-  const backendUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://api.referto.site'
-    : 'http://localhost:8000';
+  try {
+    const backendUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://api.referto.site'
+      : 'http://localhost:8000';
+      
+    // Use window.location.origin to get the current frontend URL
+    const frontendUrl = window.location.origin;
     
-  const redirectUri = `${backendUrl}/api/user/google/login`;
-  window.location.href = redirectUri;
+    // Construct the complete URL with state parameter
+    const redirectUri = `${backendUrl}/api/user/google/login/?redirect_uri=${frontendUrl}`;
+    
+    // Log the redirect URL for debugging
+    console.log('Redirecting to:', redirectUri);
+    
+    window.location.href = redirectUri;
+  } catch (error) {
+    console.error('Google Sign In Error:', error);
+    throw error;
+  }
 };
 
 // export const naverSignIn = async () => {
