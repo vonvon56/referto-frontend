@@ -1,5 +1,5 @@
 import { useState } from "react";
-import StyleItem from "./item";
+import StyleItem from "./StyleItem";
 
 const StyleList = ({
   selectedAssignmentId,

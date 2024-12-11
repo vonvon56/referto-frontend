@@ -1,36 +1,41 @@
-import { BrowserRouter, Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Header from "./components/Header";
+import "./App.css";
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import { store } from './redux/store';
+import { login, logout, setUser } from './redux/authSlice';
+import LandingPage from "./routes/LandingPage";
 import HomePage from "./routes/HomePage";
 import DetailPage from "./routes/DetailPage";
-import "./App.css";
-import LandingPage from "./routes/LandingPage";
-import { getUser, getAssignments } from "./apis/api";
 import LogInModal from "./components/Modals/LogIn";
 import SignUpModal from "./components/Modals/SignUp";
 import GoogleCallback from "./components/Auth/GoogleCallback";
+import { getUser, getAssignments } from "./apis/api";
+import { getCookie, removeCookie } from './utils/cookie';
 
 function App() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [firstAssignmentId, setFirstAssignmentId] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDetailPage, setIsDetailPage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const accessToken = localStorage.getItem('access_token');
+        const accessToken = getCookie('access_token');
         
         if (!accessToken) {
-          setIsUserLoggedIn(false);
+          dispatch(logout());
           return;
         }
 
-        const user = await getUser();
-        if (user) {
-          setIsUserLoggedIn(true);
+        const userData = await getUser();
+        if (userData) {
+          dispatch(login());
+          dispatch(setUser(userData));
           const assignments = await getAssignments();
           if (assignments && assignments.length > 0) {
             setFirstAssignmentId(assignments[0].assignment_id);
@@ -38,16 +43,16 @@ function App() {
         }
       } catch (error) {
         console.error('Authentication error:', error);
-        setIsUserLoggedIn(false);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        dispatch(logout());
+        removeCookie('access_token');
+        removeCookie('refresh_token');
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   if (isLoading) {
     return <div>Loading...</div>
@@ -56,25 +61,22 @@ function App() {
   return (
     <div className="App h-screen flex flex-col w-full overflow-hidden">
       <BrowserRouter>
-        <Header
-          isUserLoggedIn={isUserLoggedIn}
-          setIsUserLoggedIn={setIsUserLoggedIn}
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
-          showMenuButton={window.location.pathname.split('/').length === 2}
-          isDetailPage={isDetailPage}
-        />
         <div className="flex-1 w-full overflow-hidden">
           <Routes>
             <Route
               path="/:assignmentId/:referenceId"
-              element={<DetailPage setIsDetailPage={setIsDetailPage} />}
+              element={
+                <DetailPage 
+                  setIsDetailPage={setIsDetailPage}
+                />
+              }
             />
             <Route
               path="/:assignmentId"
               element={
                 <HomePage
                   isUserLoggedIn={isUserLoggedIn}
+                  setIsUserLoggedIn={(value) => dispatch(value ? login() : logout())}
                   isSidebarOpen={isSidebarOpen}
                   setIsSidebarOpen={setIsSidebarOpen}
                   setIsDetailPage={setIsDetailPage}
@@ -83,33 +85,23 @@ function App() {
             />
             <Route
               path="/account/login"
-              element={
-                <LogInModal
-                  isUserLoggedIn={isUserLoggedIn}
-                  setIsUserLoggedIn={setIsUserLoggedIn}
-                />
-              }
+              element={<LogInModal />}
             />
             <Route
               path="/account/signup"
-              element={
-                <SignUpModal
-                  isUserLoggedIn={isUserLoggedIn}
-                  setIsUserLoggedIn={setIsUserLoggedIn}
-                />
-              }
+              element={<SignUpModal />}
             />
             <Route
               path="/"
               element={
-                isUserLoggedIn ? <Navigate to={`/${firstAssignmentId}`} /> :
-                <LandingPage
-                  isUserLoggedIn={isUserLoggedIn}
-                  setIsUserLoggedIn={setIsUserLoggedIn}
-                />
+                isUserLoggedIn ? (
+                  <Navigate to={`/${firstAssignmentId}`} />
+                ) : (
+                  <LandingPage />
+                )
               }
             />    
-            <Route path="/google/callback" element={<GoogleCallback setIsUserLoggedIn={setIsUserLoggedIn} />} />
+            <Route path="/google/callback" element={<GoogleCallback />} />
           </Routes>
         </div>
       </BrowserRouter>
@@ -117,4 +109,10 @@ function App() {
   );
 }
 
-export default App;
+export default function AppWithProvider() {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+}

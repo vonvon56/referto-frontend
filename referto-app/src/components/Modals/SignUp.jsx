@@ -6,6 +6,9 @@ import alertCircle from "../../assets/images/alert-circle.svg";
 import Google from "../../assets/images/Google.png"
 import Naver from "../../assets/images/Naver.png"
 import Kakao from "../../assets/images/Kakao.png"
+import { useDispatch } from 'react-redux';
+import { login, setUser } from '../../redux/authSlice';
+import { trackEvent } from '../../utils/analytics';
 
 const SignUpModal = ( props ) => {
   const { isUserLoggedIn, setIsUserLoggedIn} = props;
@@ -53,13 +56,22 @@ const SignUpModal = ( props ) => {
     }
   };
 
+  const dispatch = useDispatch();
+
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     try {
       await signUp(signUpData);
-      setIsUserLoggedIn(true);
+      const userData = await getUser();
+      trackEvent('sign_up', { method: 'email' });
+      dispatch(login());
+      dispatch(setUser(userData));
       handleRedirect();
     } catch (error) {
+      trackEvent('sign_up_error', { 
+        method: 'email',
+        error: error.message 
+      });
       console.error('Error signing up:', error);
       setErrorAlertModalIsOpen(true);
     }
@@ -69,7 +81,15 @@ const SignUpModal = ( props ) => {
     e.preventDefault();
     try {
       await googleSignIn();
+      const userData = await getUser();
+      trackEvent('sign_up', { method: 'google' });
+      dispatch(login());
+      dispatch(setUser(userData));
     } catch (error) {
+      trackEvent('sign_up_error', { 
+        method: 'google',
+        error: error.message 
+      });
       console.error('Error signing up with Google:', error);
       setErrorAlertModalIsOpen(true);
     }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { NotepadText, Copy } from "lucide-react";
 import { getMemo, updateMemo } from "../../apis/api";
 import SuccessModal from "../Modals/SuccessModal";
+import { trackEvent } from '../../utils/analytics';
 
 const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
   const [memoContent, setMemoContent] = useState("");
@@ -48,6 +49,7 @@ const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
     $textarea.select();
     document.execCommand("copy");
     document.body.removeChild($textarea);
+    trackEvent('copy_memo', { has_content: Boolean(memoContent) });
     setCopySuccessModalIsOpen(true);
   };
 

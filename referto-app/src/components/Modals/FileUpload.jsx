@@ -6,6 +6,7 @@ import Loading from "./loading";
 import AlertModal from "./AlertModal";
 import SuccessModal from "./SuccessModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
+import { trackEvent } from '../../utils/analytics';
 
 const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUploadSuccess }) => {
   const [uploadStatus, setUploadStatus] = useState(false);
@@ -24,6 +25,11 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
   const handleFileChange = async (files) => {
     if (!files || files.length === 0) return;
 
+    if (isLandingPage && files.length > 1) {
+      setErrorAlertModalIsOpen(true);
+      return;
+    }
+
     setUploadStatus(true);
     setIsVisible(false);
     const config = {
@@ -38,16 +44,32 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
         formData.append("pdf", files[0]);
 
         try {
+          trackEvent('file_upload_start', { 
+            page: 'landing',
+            file_count: 1,
+            file_size: files[0].size
+          });
+
           const response = await testUploadPaper(formData, config);
           const references = [response.data.paper_info];
           setTestReferencesList(references);
           setUploadStatus(false);
           setUploadSuccessModalIsOpen(true);
+
+          trackEvent('file_upload_success', { 
+            page: 'landing',
+            file_count: 1
+          });
+
           if (onUploadSuccess) onUploadSuccess();
           setTimeout(() => {
             setIsOpen(false);
           }, 1000);
         } catch (error) {
+          trackEvent('file_upload_error', { 
+            page: 'landing',
+            error: error.message
+          });
           console.error('Landing page upload error:', error);
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
@@ -55,30 +77,32 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
         return;
       }
 
+      // For non-landing page uploads
+      trackEvent('file_upload_start', { 
+        page: 'main',
+        file_count: files.length,
+        total_size: Array.from(files).reduce((acc, file) => acc + file.size, 0)
+      });
+
       for (let i = 0; i < files.length; i++) {
         const formData = new FormData();
         formData.append("pdf", files[i]);
         formData.append("assignment", assignmentId);
 
         try {
-          console.log('Uploading file:', files[i].name);
-          console.log('FormData:', {
-            pdf: formData.get('pdf'),
-            assignment: formData.get('assignment')
-          });
-
           const response_paper = await uploadPaper(formData, config);
-          console.log('Upload successful:', response_paper);
-
-          const response_paperinfo = await uploadPaperInfo(
-            response_paper.data.paper_id
-          );
-          console.log('Paper info updated:', response_paperinfo);
+          trackEvent('file_upload_success', { 
+            page: 'main',
+            file_index: i + 1,
+            file_count: files.length
+          });
         } catch (error) {
-          console.error('Upload error:', error);
-          if (error.data) {
-            console.error('Server error details:', error.data);
-          }
+          trackEvent('file_upload_error', { 
+            page: 'main',
+            file_index: i + 1,
+            error: error.message
+          });
+          console.error('Error uploading file:', error);
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
           return;
@@ -117,27 +141,18 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragOver(false);
-    const files = e.dataTransfer.files;
-    
-    if (isLandingPage && files.length > 1) {
-      // 랜딩페이지에서 여러 파일을 드래그했을 때 처리
-      setErrorAlertModalIsOpen(true);
-      return;
-    }
-    
-    handleFileChange(files);
+    trackEvent('file_drop', { 
+      page: isLandingPage ? 'landing' : 'main'
+    });
+    handleFileChange(e.dataTransfer.files);
   };
 
   const handleInputChange = (e) => {
-    const files = e.target.files;
-    
-    if (isLandingPage && files.length > 1) {
-      // 랜딩페이지에서 여러 파일을 선택했을 때 처리
-      setErrorAlertModalIsOpen(true);
-      return;
-    }
-    
-    handleFileChange(files);
+    trackEvent('file_select', { 
+      page: isLandingPage ? 'landing' : 'main',
+      method: 'click'
+    });
+    handleFileChange(e.target.files);
   };
 
   return (
@@ -175,17 +190,10 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className="self-stretch flex-col justify-start items-center gap-2 flex">
-            <FileUp className="w-6 sm:w-8 h-6 sm:h-8 text-neutral-300" />
-            <div className="self-stretch text-center text-neutral-300 text-xs sm:text-sm font-medium font-['Pretendard'] leading-none">
-              pdf 첨부 가능
-            </div>
-            <div className="self-stretch text-center text-neutral-300 text-xs sm:text-sm font-medium font-['Pretendard'] leading-none">
-              {isLandingPage 
-                ? "PDF 파일 하나를 선택해주세요."
-                : "클릭하거나 업로드할 파일을 드롭하세요."
-              }
-            </div>
+          <FileUp className="w-5 sm:w-6 h-5 sm:h-6 relative text-neutral-400" />
+          <div className="text-center text-neutral-400 text-sm sm:text-base font-medium font-['Pretendard'] leading-tight sm:pt-4 pt-2">
+            PDF 파일을 업로드해주세요
+            {!isLandingPage && <div className='text-neutral-400'>(여러 파일 선택 가능)</div>}
           </div>
         </div>
       </div>
