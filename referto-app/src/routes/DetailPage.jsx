@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import ReferenceItemDetail from "../components/Reference/ReferenceItemDetail";
 import { useLocation, useNavigate } from "react-router-dom";
 import PDFViewer from "../components/PDFViewer/PDFViewer";
-import ReferenceMemo from "../components/Memos/ReferenceMemo";
+import ReferenceMemo from "../components/ReferenceMemo/ReferenceMemo";
 import { getPaper, getNotes, deleteNote, getAssignments } from "../apis/api";
 import { NotepadText, Trash2 } from "lucide-react";
 import Header from "../components/Header/Header";
