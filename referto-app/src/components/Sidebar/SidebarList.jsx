@@ -1,10 +1,11 @@
-import SidebarItem from "./item";
+import SidebarItem from "./SidebarItem";
 // import assignments from "../../data/assignments";
 import { Plus } from 'lucide-react';
 import { createAssignment, getAssignments, getUser } from '../../apis/api';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCookie, removeCookie } from "../../utils/cookie";
+import { trackEvent } from '../../utils/analytics';
 
 const SidebarList = (props) => {
   const navigate = useNavigate()
@@ -42,6 +43,9 @@ const SidebarList = (props) => {
     try {
       const newAssignment = await createAssignment({
         name: 'untitled'
+      });
+      trackEvent('create_assignment', { 
+        assignment_id: newAssignment.assignment_id 
       });
       setAssignmentsList([...assignmentsList, newAssignment]);
       navigate(`/${newAssignment.assignment_id}`);

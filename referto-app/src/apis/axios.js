@@ -1,22 +1,20 @@
 import axios from "axios";
-import { getCookie } from "../utils/cookie";
+import { getCookie, removeCookie } from "../utils/cookie";
+import { store } from '../redux/store';
+import { logout } from '../redux/authSlice';
 
 const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://api.referto.site/api'
   : 'http://localhost:8000/api';
 
-// 토큰 갱신 중인지 확인하는 플래그
 let isRefreshing = false;
-// 토큰 갱신 대기중인 요청들을 저장하는 배열
 let refreshSubscribers = [];
 
-// 토큰 갱신 후 대기중인 요청들을 처리하는 함수
 const onRefreshed = (accessToken) => {
   refreshSubscribers.map(callback => callback(accessToken));
   refreshSubscribers = [];
 };
 
-// 실패한 요청을 다시 보내는 함수
 const retryOriginalRequest = (originalRequest) =>
   new Promise(resolve => {
     refreshSubscribers.push(accessToken => {
@@ -47,18 +45,13 @@ export const instanceWithToken = axios.create({
 
 instanceWithToken.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem('access_token') || getCookie("access_token");
+    const accessToken = getCookie("access_token");
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     
-    // Ensure proper protocol in production
     if (process.env.NODE_ENV === 'production') {
       config.url = config.url.replace('http://', 'https://');
-    }
-    
-    // Add origin header in production
-    if (process.env.NODE_ENV === 'production') {
       config.headers['Origin'] = 'https://www.referto.site';
     }
     
@@ -72,20 +65,18 @@ instanceWithToken.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // 네트워크 에러 처리
     if (!error.response) {
       console.error('Network error:', error);
       if (process.env.NODE_ENV === 'production') {
+        store.dispatch(logout());
         window.location.replace('/account/login');
       }
       return Promise.reject(error);
     }
 
-    // 401 에러이고 재시도하지 않은 요청인 경우
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      // 이미 토큰 갱신 중이면 대기
       if (isRefreshing) {
         return retryOriginalRequest(originalRequest);
       }
@@ -104,18 +95,11 @@ instanceWithToken.interceptors.response.use(
 
         const newAccessToken = response.data.access;
         
-        // 토큰 저장 (7일 유효)
-        const expiryDate = new Date();
-        expiryDate.setHours(expiryDate.getHours() + 24);
-        
-        localStorage.setItem('access_token', newAccessToken);
-        document.cookie = `access_token=${newAccessToken}; expires=${expiryDate.toUTCString()}; path=/`;
+        document.cookie = `access_token=${newAccessToken}; path=/; secure; samesite=Lax`;
 
-        // 헤더 업데이트
         instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
-        // 대기 중인 요청들 처리
         onRefreshed(newAccessToken);
         isRefreshing = false;
 
@@ -124,21 +108,19 @@ instanceWithToken.interceptors.response.use(
         console.error('Token refresh failed:', refreshError);
         isRefreshing = false;
         
-        // 토큰 관련 데이터 삭제
-        localStorage.removeItem('access_token');
-        document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        removeCookie('access_token');
+        removeCookie('refresh_token');
+        store.dispatch(logout());
         
         window.location.replace('/account/login');
         return Promise.reject(refreshError);
       }
     }
 
-    // 다른 401/403 에러 처리
     if (error.response.status === 401 || error.response.status === 403) {
-      localStorage.removeItem('access_token');
-      document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-      document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      removeCookie('access_token');
+      removeCookie('refresh_token');
+      store.dispatch(logout());
       window.location.replace('/account/login');
     }
 

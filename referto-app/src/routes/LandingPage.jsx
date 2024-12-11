@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import FileUploadModal from '../components/Modals/FileUpload';
 import { Upload } from 'lucide-react';
+import Header from "../components/Header/Header";
+import { trackEvent } from '../utils/analytics';
 
-const LandingPage = () => {
+const LandingPage = ({ isUserLoggedIn, setIsUserLoggedIn }) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadCount, setUploadCount] = useState(() => {
     return parseInt(localStorage.getItem('landingUploadCount') || '0');
@@ -77,14 +79,11 @@ const LandingPage = () => {
           delayChildren: 0.3
         }
       }
-    },
-    scaleOnHover: {
-      hover: { scale: 1.05 },
-      tap: { scale: 0.95 }
     }
   };
 
   const handleUploadClick = () => {
+    trackEvent('landing_upload_click', { upload_count: uploadCount });
     if (uploadCount >= 2) {
       navigate('/account/login');
     } else {
@@ -96,29 +95,14 @@ const LandingPage = () => {
     const newCount = uploadCount + 1;
     setUploadCount(newCount);
     localStorage.setItem('landingUploadCount', newCount.toString());
-    localStorage.setItem('uploadTimestamp', new Date().getTime().toString());
   };
-
-  useEffect(() => {
-    const savedReferences = localStorage.getItem('landingPageReferences');
-    if (savedReferences) {
-      setTestReferencesList(JSON.parse(savedReferences));
-    }
-  }, []);
-
-  useEffect(() => {
-    const uploadTimestamp = localStorage.getItem('uploadTimestamp');
-    if (uploadTimestamp) {
-      const now = new Date().getTime();
-    }
-  }, []);
 
   const handleReferencesUpdate = (newReferences) => {
     setTestReferencesList(newReferences);
-    localStorage.setItem('landingPageReferences', JSON.stringify(newReferences));
   };
 
   const handleDemoClick = () => {
+    trackEvent('demo_click', { upload_count: uploadCount });
     if (uploadCount >= 2) {
       navigate('/account/login');
     } else {
@@ -127,214 +111,225 @@ const LandingPage = () => {
     }
   };
 
+  const handleStartClick = () => {
+    trackEvent('start_click', { location: 'landing_page' });
+    navigate('/account/login');
+  };
+
   return (
-    <div className="w-full h-[calc(100vh-65px)] overflow-y-auto min-w-full">
-      <motion.div 
-        ref={demoSectionRef}
-        initial="hidden"
-        animate="visible"
-        variants={animations.staggerContainer}
-        className="w-full min-w-full px-6 sm:px-8 lg:px-16 py-16 sm:py-20 md:py-24 lg:py-32 bg-gradient-to-b from-neutral-50 via-[#7e7e7e] to-neutral-900 flex flex-col items-center"
-      >
-        <div className="w-full flex flex-col items-center gap-4 sm:gap-6">
-          <motion.div 
-              variants={animations.fadeInUp}
-              className="text-center text-neutral-900 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
-            >
-            참고문헌 왜 혼자 써?
-          </motion.div>
-          <div className="w-full flex justify-center">
-            <motion.div 
-              variants={animations.fadeIn}
-              className="text-center text-neutral-600 text-lg sm:text-xl md:text-2xl font-medium max-w-[320px] sm:max-w-none break-keep"
-            >
-              REFERTO와 함께 쉽고 빠르게 참고문헌을 생성하고 관리해보세요.
-            </motion.div>
-          </div>
-        </div>
-
-        <motion.div
-          variants={animations.fadeInUp}
-          className="w-full max-w-sm flex justify-center mt-8 sm:mt-10"
+    <>
+      <Header
+        isUserLoggedIn={isUserLoggedIn}
+        setIsUserLoggedIn={setIsUserLoggedIn}
+        isDetailPage={false}
+      />
+      <div className="w-full h-[calc(100vh-65px)] overflow-y-auto min-w-full">
+        <motion.div 
+          ref={demoSectionRef}
+          initial="hidden"
+          animate="visible"
+          variants={animations.staggerContainer}
+          className="w-full min-w-full px-6 sm:px-8 lg:px-16 py-16 sm:py-20 md:py-24 lg:py-32 bg-gradient-to-b from-neutral-50 via-[#7e7e7e] to-neutral-900 flex flex-col items-center"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-fit min-w-[200px] px-6 py-3 bg-neutral-900 rounded-md flex items-center justify-center gap-2 text-white text-lg sm:text-xl font-medium cursor-pointer"
-            onClick={handleUploadClick}
-          >
-            <Upload className="w-5 h-5" />
-            {uploadCount >= 2 ? '더 많은 기능 사용하기' : '파일 업로드하기'}
-          </motion.div>
-        </motion.div>
+          <div className="w-full flex flex-col items-center gap-4 sm:gap-6">
+            <motion.div 
+                variants={animations.fadeInUp}
+                className="text-center text-neutral-900 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
+              >
+              참고문헌 왜 혼자 써?
+            </motion.div>
+            <div className="w-full flex justify-center">
+              <motion.div 
+                variants={animations.fadeIn}
+                className="text-center text-neutral-600 text-lg sm:text-xl md:text-2xl font-medium max-w-[320px] sm:max-w-none break-keep"
+              >
+                REFERTO와 함께 쉽고 빠르게 참고문헌을 생성하고 관리해보세요.
+              </motion.div>
+            </div>
+          </div>
 
-        {testReferencesList && testReferencesList.length > 0 && (
           <motion.div
             variants={animations.fadeInUp}
-            className="w-full max-w-3xl mt-12 p-6 bg-white/90 backdrop-blur-sm rounded-lg border border-neutral-200"
+            className="w-full max-w-sm flex justify-center mt-8 sm:mt-10"
           >
-            <div className="font-semibold mb-4 text-xl text-neutral-900">생성된 참고문헌</div>
-            {testReferencesList.map((ref, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="flex flex-col gap-2"
-              >
-                <motion.div
-                  whileHover={{
-                    scale: 1.01,
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    transition: { duration: 0.2 }
-                  }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
-                >
-                  <div className="font-medium mb-2 text-neutral-900">APA</div>
-                  <div className="text-neutral-800">{ref.APA}</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{
-                    scale: 1.01,
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    transition: { duration: 0.2 }
-                  }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
-                >
-                  <div className="font-medium mb-2 text-neutral-900">MLA</div>
-                  <div className="text-neutral-800">{ref.MLA}</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{
-                    scale: 1.01,
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    transition: { duration: 0.2 }
-                  }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
-                >
-                  <div className="font-medium mb-2 text-neutral-900">Chicago</div>
-                  <div className="text-neutral-800">{ref.Chicago}</div>
-                </motion.div>
-                <motion.div
-                  whileHover={{
-                    scale: 1.01,
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    transition: { duration: 0.2 }
-                  }}
-                  className="p-3 bg-white/80 rounded mb-2 shadow-sm"
-                >
-                  <div className="font-medium mb-2 text-neutral-900">Vancouver</div>
-                  <div className="text-neutral-800">{ref.Vancouver}</div>
-                </motion.div>
-              </motion.div>
-            ))}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-fit min-w-[200px] px-6 py-3 bg-neutral-900 rounded-md flex items-center justify-center gap-2 text-white text-lg sm:text-xl font-medium cursor-pointer"
+              onClick={handleUploadClick}
+            >
+              <Upload className="w-5 h-5" />
+              {uploadCount >= 2 ? '더 많은 기능 사용하기' : '파일 업로드하기'}
+            </motion.div>
           </motion.div>
-        )}
-      </motion.div>
 
-      <motion.div 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={animations.staggerContainer}
-        className="w-full px-6 sm:px-8 lg:px-16 py-20 lg:py-32 md:py-24 sm:py-16 bg-neutral-900 flex flex-col items-center gap-20"
-      >
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center gap-[27px]"
-        >
-          <div className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-semibold leading-tight tracking-tight">주요 기능</div>
+          {testReferencesList && testReferencesList.length > 0 && (
+            <motion.div
+              variants={animations.fadeInUp}
+              className="w-full max-w-3xl mt-12 p-6 bg-white/90 backdrop-blur-sm rounded-lg border border-neutral-200"
+            >
+              <div className="font-semibold mb-4 text-xl text-neutral-900">생성된 참고문헌</div>
+              {testReferencesList.map((ref, index) => (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="flex flex-col gap-2"
+                >
+                  <motion.div
+                    whileHover={{
+                      scale: 1.01,
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      transition: { duration: 0.2 }
+                    }}
+                    className="p-3 bg-white/80 rounded mb-2 shadow-sm"
+                  >
+                    <div className="font-medium mb-2 text-neutral-900">APA</div>
+                    <div className="text-neutral-800">{ref.APA}</div>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{
+                      scale: 1.01,
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      transition: { duration: 0.2 }
+                    }}
+                    className="p-3 bg-white/80 rounded mb-2 shadow-sm"
+                  >
+                    <div className="font-medium mb-2 text-neutral-900">MLA</div>
+                    <div className="text-neutral-800">{ref.MLA}</div>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{
+                      scale: 1.01,
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      transition: { duration: 0.2 }
+                    }}
+                    className="p-3 bg-white/80 rounded mb-2 shadow-sm"
+                  >
+                    <div className="font-medium mb-2 text-neutral-900">Chicago</div>
+                    <div className="text-neutral-800">{ref.Chicago}</div>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{
+                      scale: 1.01,
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      transition: { duration: 0.2 }
+                    }}
+                    className="p-3 bg-white/80 rounded mb-2 shadow-sm"
+                  >
+                    <div className="font-medium mb-2 text-neutral-900">Vancouver</div>
+                    <div className="text-neutral-800">{ref.Vancouver}</div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </motion.div>
-              
+
         <motion.div 
           initial="hidden"
           whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
           variants={animations.staggerContainer}
-          className="h-full flex flex-col lg:flex-row justify-center items-center gap-[100px] md:gap-[50px] sm:gap-[30px]"
-        > 
-          <motion.img 
-            variants={animations.fadeInUp}
-            className="w-[800px] lg:w-[600px] md:w-[90%] h-auto"
-            src={capture}
-            alt="key features"
-          />
-          <div className="p-5 flex flex-col justify-start lg:items-start items-center gap-[50px]">
-            {[
-              { title: '참고문헌 생성', description: '파일을 업로드하기만 하면 양식에 따라 참고문헌 자동 생성!' },
-              { title: '과제 관리', description: '내 과제와 참고문헌을 한 번에 관리할 수 있어요.' },
-              { title: '메모 추가', description: '참고문헌에 하이라이팅과 메모를 표시하고 각주와 함께 복사해보세요.' }
-            ].map((feature, index) => (
+          className="w-full px-6 sm:px-8 lg:px-16 py-20 lg:py-32 md:py-24 sm:py-16 bg-neutral-900 flex flex-col items-center gap-20"
+        >
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-[27px]"
+          >
+            <div className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-semibold leading-tight tracking-tight">주요 기능</div>
+          </motion.div>
+              
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            variants={animations.staggerContainer}
+            className="h-full flex flex-col lg:flex-row justify-center items-center gap-[100px] md:gap-[50px] sm:gap-[30px]"
+          > 
+            <motion.img 
+              variants={animations.fadeInUp}
+              className="w-[800px] lg:w-[600px] md:w-[90%] h-auto"
+              src={capture}
+              alt="key features"
+            />
+            <div className="p-5 flex flex-col justify-start lg:items-start items-center gap-[50px]">
+              {[
+                { title: '참고문헌 생성', description: '파일을 업로드하기만 하면 양식에 따라 참고문헌 자동 생성!' },
+                { title: '과제 관리', description: '내 과제와 참고문헌을 한 번에 관리할 수 있어요.' },
+                { title: '메모 추가', description: '참고문헌에 하이라이팅과 메모를 표시하고 각주와 함께 복사해보세요.' }
+              ].map((feature, index) => (
+                <motion.div
+                  key={index}
+                  variants={animations.fadeInUp}
+                  className="flex flex-col gap-2.5 lg:items-start items-center"
+                >
+                  <div className="flex flex-row gap-[12px] items-center">
+                    <CircleCheckBig className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="text-white text-xl sm:text-2xl md:text-3xl font-medium leading-normal tracking-tight">{feature.title}</div>
+                  </div>
+                  <div className="text-white text-lg sm:text-xl md:text-2xl font-normal leading-normal tracking-tight lg:text-left text-center max-w-[320px] sm:max-w-none break-keep">
+                    {feature.description.split('\n').map((line, index) => (
+                      <span key={index}>{line}<br /></span>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={animations.staggerContainer}
+          className="w-full px-6 sm:px-8 lg:px-16 py-20 lg:py-32 md:py-24 sm:py-16 bg-white flex flex-col items-center gap-20"
+        >
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-neutral-900 text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-semibold leading-tight tracking-tight"
+          >
+            팀 소개
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            variants={animations.staggerContainer}
+            className="w-full flex justify-center items-start gap-[23px] flex-wrap px-16"
+          >
+            {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
                 variants={animations.fadeInUp}
-                className="flex flex-col gap-2.5 lg:items-start items-center"
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col justify-start items-center gap-5 w-full sm:w-[300px]"
               >
-                <div className="flex flex-row gap-[12px] items-center">
-                  <CircleCheckBig className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-                  <div className="text-white text-xl sm:text-2xl md:text-3xl font-medium leading-normal tracking-tight">{feature.title}</div>
-                </div>
-                <div className="text-white text-lg sm:text-xl md:text-2xl font-normal leading-normal tracking-tight lg:text-left text-center max-w-[320px] sm:max-w-none break-keep">
-                  {feature.description.split('\n').map((line, index) => (
-                    <span key={index}>{line}<br /></span>
-                  ))}
+                <div className="w-full sm:w-[300px] h-auto min-h-[230px] p-10 sm:p-6 bg-[#181818] rounded-[10px] border border-[#dedede] flex flex-col justify-start items-start gap-[30px]">
+                  <div className="flex items-center gap-[13px]">
+                    <div className="w-[50px] h-[50px] flex items-center justify-center">
+                      <img className="w-[50px] h-[50px] rounded-full" src={member.image} alt={member.name} />
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <div className="text-white text-base sm:text-lg md:text-xl font-semibold leading-normal tracking-tight">
+                        {member.name}
+                      </div>
+                      <div className="text-white text-base sm:text-lg md:text-xl font-medium leading-normal tracking-tight">
+                        {member.role}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-white text-base sm:text-lg md:text-xl font-normal leading-normal tracking-tight max-w-[280px] sm:max-w-none break-keep">
+                    {member.description}
+                  </div>
                 </div>
               </motion.div>
             ))}
-          </div>
-        </motion.div>
-      </motion.div>
-
-      <motion.div 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={animations.staggerContainer}
-        className="w-full px-6 sm:px-8 lg:px-16 py-20 lg:py-32 md:py-24 sm:py-16 bg-white flex flex-col items-center gap-20"
-      >
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-neutral-900 text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-semibold leading-tight tracking-tight"
-        >
-          팀 소개
-        </motion.div>
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          variants={animations.staggerContainer}
-          className="w-full flex justify-center items-start gap-[23px] flex-wrap px-16"
-        >
-          {teamMembers.map((member, index) => (
-            <motion.div
-              key={index}
-              variants={animations.fadeInUp}
-              whileHover={animations.scaleOnHover}
-              className="flex flex-col justify-start items-center gap-5 w-full sm:w-[300px]"
-            >
-              <div className="w-full sm:w-[300px] h-auto min-h-[230px] p-10 sm:p-6 bg-[#181818] rounded-[10px] border border-[#dedede] flex flex-col justify-start items-start gap-[30px]">
-                <div className="flex items-center gap-[13px]">
-                  <div className="w-[50px] h-[50px] flex items-center justify-center">
-                    <img className="w-[50px] h-[50px] rounded-full" src={member.image} alt={member.name} />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <div className="text-white text-base sm:text-lg md:text-xl font-semibold leading-normal tracking-tight">
-                      {member.name}
-                    </div>
-                    <div className="text-white text-base sm:text-lg md:text-xl font-medium leading-normal tracking-tight">
-                      {member.role}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-white text-base sm:text-lg md:text-xl font-normal leading-normal tracking-tight max-w-[280px] sm:max-w-none break-keep">
-                  {member.description}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+          </motion.div>
         </motion.div>
 
         <motion.div
@@ -364,7 +359,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-fit min-w-[200px] px-6 py-3 bg-neutral-900 rounded-md flex items-center justify-center gap-2 text-white text-lg sm:text-xl font-medium cursor-pointer"
-              onClick={() => navigate('/account/login')}
+              onClick={handleStartClick}
             >
               시작하기
             </motion.div>
@@ -400,7 +395,8 @@ const LandingPage = () => {
             onUploadSuccess={handleUploadSuccess}
           />
         )}
-    </div>
+      </div>
+    </>
   );
 }
 

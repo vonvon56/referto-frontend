@@ -242,19 +242,11 @@ export const testUploadPaper = async (formData, config) => {
 // 소셜 로그인 API들
 export const googleSignIn = async () => {
   try {
-    const backendUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://api.referto.site'
-      : 'http://localhost:8000';
-      
-    // Use window.location.origin to get the current frontend URL
-    const frontendUrl = window.location.origin;
+    // 개발 환경에서는 무조건 localhost 사용
+    const backendUrl = 'http://localhost:8000';
+    const redirectUri = `${backendUrl}/api/user/google/login/`;
     
-    // Construct the complete URL with state parameter
-    const redirectUri = `${backendUrl}/api/user/google/login/?redirect_uri=${frontendUrl}`;
-    
-    // Log the redirect URL for debugging
     console.log('Redirecting to:', redirectUri);
-    
     window.location.href = redirectUri;
   } catch (error) {
     console.error('Google Sign In Error:', error);

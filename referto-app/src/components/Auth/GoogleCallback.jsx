@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login, logout, setUser } from '../../redux/authSlice';
 import { getUser, getAssignments } from '../../apis/api';
 
-const GoogleCallback = ({ setIsUserLoggedIn }) => {
+const GoogleCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -18,16 +21,14 @@ const GoogleCallback = ({ setIsUserLoggedIn }) => {
         console.log('[GoogleCallback] Tokens from URL:', { accessToken, refreshToken });
 
         if (accessToken && refreshToken) {
-          // Store tokens
           document.cookie = `access_token=${accessToken}; path=/`;
           document.cookie = `refresh_token=${refreshToken}; path=/`;
           
-          // Get user data and first assignment
           const user = await getUser();
           console.log('[GoogleCallback] User data:', user);
           
-          // 로그인 상태 업데이트
-          setIsUserLoggedIn(true);
+          dispatch(login());
+          dispatch(setUser(user));
           
           const assignments = await getAssignments();
           console.log('[GoogleCallback] Assignments:', assignments);
@@ -45,7 +46,7 @@ const GoogleCallback = ({ setIsUserLoggedIn }) => {
         }
       } catch (error) {
         console.error('[GoogleCallback] Error:', error);
-        setIsUserLoggedIn(false);  // 에러 발생 시 로그인 상태 false로 설정
+        dispatch(logout());
         navigate('/login', { 
           state: { error: '로그인에 실패했습니다. 다시 시도해주세요.' } 
         });
@@ -53,7 +54,7 @@ const GoogleCallback = ({ setIsUserLoggedIn }) => {
     };
 
     handleCallback();
-  }, [navigate, location, setIsUserLoggedIn]);
+  }, [navigate, location, dispatch]);
 
   return <div>로그인 처리중...</div>;
 };

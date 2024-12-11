@@ -8,6 +8,7 @@ import AssignmentModal from "../Modals/AssignmentModal";
 import { updateAssignment, deleteAssignment } from '../../apis/api';
 import DeleteConfirmModal from "../Modals/DeleteConfirmModal";
 import AlertModal from "../Modals/AlertModal";
+import { trackEvent } from '../../utils/analytics';
 
 const SidebarItem = ({
   assignmentId,
@@ -81,6 +82,7 @@ const SidebarItem = ({
 
     try {
       await deleteAssignment(assignmentId);
+      trackEvent('delete_assignment', { assignment_id: assignmentId });
       setDeleteModalIsOpen(false);
       console.log('Assignment deleted successfully');
 

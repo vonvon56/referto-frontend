@@ -1,4 +1,4 @@
-import ReferenceItem from "./item";
+import ReferenceItem from "./ReferenceItem";
 
 const ReferenceList = ({
   referencesList,

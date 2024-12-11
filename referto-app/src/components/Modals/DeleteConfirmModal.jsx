@@ -1,9 +1,16 @@
 import { useEffect } from "react";
 import ReactDOM from 'react-dom';
+import { trackEvent } from '../../utils/analytics';
 
 const DeleteConfirmModal = ({ deleteParams, handleDelete, handleDeleteCancel }) => {
     const handleConfirmDelete = () => {
+        trackEvent('confirm_delete', { params: deleteParams });
         handleDelete(deleteParams);
+    };
+
+    const handleCancel = () => {
+        trackEvent('cancel_delete');
+        handleDeleteCancel();
     };
 
     // Portal을 사용하여 모달을 body에 직접 렌더링
@@ -15,7 +22,7 @@ const DeleteConfirmModal = ({ deleteParams, handleDelete, handleDeleteCancel }) 
                     <div className="self-stretch text-neutral-500 text-xs sm:text-sm font-medium font-['Pretendard'] leading-tight">삭제하면 복구할 수 없습니다.</div>
                 </div>
                 <div className="self-stretch justify-start items-start gap-2 inline-flex">
-                    <div className="grow shrink basis-0 h-9 p-2 rounded border border-black/10 justify-center items-center gap-1 flex cursor-pointer" onClick={handleDeleteCancel}>
+                    <div className="grow shrink basis-0 h-9 p-2 rounded border border-black/10 justify-center items-center gap-1 flex cursor-pointer" onClick={handleCancel}>
                         <div className="text-neutral-700 text-sm font-semibold font-['Pretendard'] leading-tight">취소</div>
                     </div>
                     <div className="grow shrink basis-0 h-9 p-2 bg-red-500 rounded border border-black/10 justify-center items-center gap-1 flex cursor-pointer" onClick={handleConfirmDelete}>

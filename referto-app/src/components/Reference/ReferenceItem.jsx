@@ -7,6 +7,7 @@ import AlertModal from "../Modals/AlertModal";
 import SuccessModal from "../Modals/SuccessModal";
 import alertTriangle from "../../assets/images/alert-triangle.svg";
 import checkCircle2 from "../../assets/images/check-circle-2.svg";
+import { trackEvent } from '../../utils/analytics';
 
 const ReferenceItem = ({
   reference,
@@ -64,6 +65,7 @@ const ReferenceItem = ({
       new_reference: content,
     };
     await updatePaperInfo(referenceId, newContent);
+    trackEvent('update_reference', { style: selectedStyleName });
     setIsEdit(!isEdit);
     const updatedReferencesList = [...referencesList];
     updatedReferencesList[index-1][selectedStyleName] = content;
@@ -78,6 +80,7 @@ const ReferenceItem = ({
   };
 
   const handleReferenceDelete = async () => {
+    trackEvent('delete_reference', { index });
     await deletePaper(paperId);
     window.location.reload();
   };
@@ -87,6 +90,7 @@ const ReferenceItem = ({
   };
 
   const handleCopy = () => {
+    trackEvent('copy_reference', { style: selectedStyleName });
     const $textarea = document.createElement("textarea");
     document.body.appendChild($textarea);
     $textarea.value = content;
