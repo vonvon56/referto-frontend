@@ -1,4 +1,7 @@
 import { instance, instanceWithToken } from "./axios";
+import { store } from "../redux/store";
+import { logout } from "../redux/authSlice";
+import { removeCookie } from "../utils/cookie";
 
 // User 관련 API들
 export const signIn = async (data) => {
@@ -242,6 +245,11 @@ export const testUploadPaper = async (formData, config) => {
 // 소셜 로그인 API들
 export const googleSignIn = async () => {
   try {
+    // 기존 로그인 정보를 클리어
+    store.dispatch(logout());
+    removeCookie('access_token');
+    removeCookie('refresh_token');
+    
     // 개발 환경에서는 무조건 localhost 사용
     const backendUrl = 'http://localhost:8000';
     const redirectUri = `${backendUrl}/api/user/google/login/`;

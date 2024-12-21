@@ -14,6 +14,11 @@ const GoogleCallback = () => {
       try {
         console.log('[GoogleCallback] Starting callback handling');
         
+        dispatch(logout());
+        dispatch(setUser(null));
+        localStorage.clear();
+        sessionStorage.clear();
+        
         const params = new URLSearchParams(location.search);
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
