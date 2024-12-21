@@ -52,7 +52,6 @@ instanceWithToken.interceptors.request.use(
     
     if (process.env.NODE_ENV === 'production') {
       config.url = config.url.replace('http://', 'https://');
-      config.headers['Origin'] = 'https://www.referto.site';
     }
     
     return config;
