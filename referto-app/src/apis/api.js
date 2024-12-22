@@ -10,9 +10,12 @@ export const signIn = async (data) => {
     if (response.status === 200) {
       return response.data;
     }
-    throw new Error('Login failed');
+    throw new Error("Login failed");
   } catch (error) {
-    console.error("[ERROR] error while signing in:", error.response?.data || error.message);
+    console.error(
+      "[ERROR] error while signing in:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -23,9 +26,12 @@ export const signUp = async (data) => {
     if (response.status === 200 || response.status === 201) {
       return response.data;
     }
-    throw new Error('Signup failed');
+    throw new Error("Signup failed");
   } catch (error) {
-    console.error("[ERROR] error while signing up:", error.response?.data || error.message);
+    console.error(
+      "[ERROR] error while signing up:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -49,9 +55,12 @@ export const getAssignments = async () => {
       console.log("ASSIGNMENTS GET SUCCESS");
       return response.data;
     }
-    throw new Error('Failed to get assignments');
+    throw new Error("Failed to get assignments");
   } catch (error) {
-    console.error("[ERROR] error while getting assignments:", error.response?.data || error.message);
+    console.error(
+      "[ERROR] error while getting assignments:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -104,9 +113,12 @@ export const uploadPaper = async (formData, config) => {
       console.log("PAPER UPLOAD SUCCESS");
       return response.data;
     }
-    throw new Error('Failed to upload paper');
+    throw new Error("Failed to upload paper");
   } catch (error) {
-    console.error("[ERROR] error while uploading paper:", error.response?.data || error.message);
+    console.error(
+      "[ERROR] error while uploading paper:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -247,17 +259,21 @@ export const googleSignIn = async () => {
   try {
     // 기존 로그인 정보를 클리어
     store.dispatch(logout());
-    removeCookie('access_token');
-    removeCookie('refresh_token');
-    
-    // 개발 환경에서는 무조건 localhost 사용
-    const backendUrl = 'http://localhost:8000';
+    removeCookie("access_token");
+    removeCookie("refresh_token");
+
+    // 개발 환경에서는 무조건 로컬 호스트 사용
+    // 배포 환경에선 배포 서버 사용
+    const backendUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://api.referto.site"
+        : "http://localhost:8000";
     const redirectUri = `${backendUrl}/api/user/google/login/`;
-    
-    console.log('Redirecting to:', redirectUri);
+
+    console.log("Redirecting to:", redirectUri);
     window.location.href = redirectUri;
   } catch (error) {
-    console.error('Google Sign In Error:', error);
+    console.error("Google Sign In Error:", error);
     throw error;
   }
 };
