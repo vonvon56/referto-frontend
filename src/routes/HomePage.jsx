@@ -1,14 +1,14 @@
 import { Copy, Upload, ArrowUpDown } from "lucide-react";
-import ReferenceList from "../components/Reference/ReferenceList";
-import SidebarList from "../components/Sidebar/SidebarList";
-import FileUploadModal from "../components/Modals/FileUpload";
-import SuccessModal from "../components/Modals/SuccessModal";
-import StyleList from "../components/Style/StyleList";
+import ReferenceList from "../components/Reference/ReferenceList.jsx";
+import SidebarList from "../components/Sidebar/SidebarList.jsx";
+import FileUploadModal from "../components/Modals/FileUpload.jsx";
+import SuccessModal from "../components/Modals/SuccessModal.jsx";
+import StyleList from "../components/Style/StyleList.jsx";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getPaperInfos, getAssignment } from "../apis/api.js";
-import Header from "../components/Header/Header";
-import { trackEvent } from '../utils/analytics';
+import Header from "../components/Header/Header.jsx";
+import { trackEvent } from '../utils/analytics.js';
 
 const HomePage = ({ isUserLoggedIn, setIsUserLoggedIn, isSidebarOpen, setIsSidebarOpen, setIsDetailPage }) => {
   const [referencesList, setReferencesList] = useState([]);
