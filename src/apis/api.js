@@ -77,18 +77,15 @@ export const getUser = async () => {
   console.log('[API] Attempting to get user data');
   try {
     const accessToken = getCookie('access_token');
-    console.log('[API] Current access token:', accessToken);
+    console.log('[API] Token from cookie:', accessToken);
     
-    const response = await instanceWithToken.get("/user/auth/");
+    const response = await instanceWithToken.post("/user/auth/", {
+      access_token: accessToken
+    });
     console.log('[API] GetUser response:', response);
     return response.data;
   } catch (error) {
-    console.error('[API] GetUser error details:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-      fullError: error
-    });
+    console.error('[API] GetUser error:', error);
     throw error;
   }
 };
