@@ -281,7 +281,7 @@ export const googleSignIn = async () => {
 
     const backendUrl = "https://api.referto.site";
 
-    const redirectUri = `${backendUrl}/api/user/google/login/`;
+    const redirectUri = "https://api.referto.site/api/user/google/login/";
 
     window.location.href = redirectUri;
   } catch (error) {
