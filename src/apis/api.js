@@ -22,17 +22,17 @@ export const signIn = async (data) => {
       const { token } = response.data;
       console.log('[API] Full token object:', token);
       
-      if (!token || !token.access || !token.refresh) {
+      if (!token || !token.access_token || !token.refresh_token) {
         console.error('[API] Invalid token structure:', token);
         throw new Error('Invalid token structure in response');
       }
 
       // 토큰을 쿠키에 저장
-      setCookie("access_token", token.access);
-      setCookie("refresh_token", token.refresh);
+      setCookie("access_token", token.access_token);
+      setCookie("refresh_token", token.refresh_token);
       
       // axios 인스턴스의 기본 헤더에 토큰 설정
-      instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${token.access}`;
+      instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${token.access_token}`;
       
       // 토큰 저장 확인
       const savedToken = getCookie("access_token");
