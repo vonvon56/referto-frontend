@@ -266,7 +266,6 @@ export const googleSignIn = async () => {
 
     const redirectUri = `${backendUrl}/api/user/google/login/`;
 
-    console.log("Redirecting to:", redirectUri);
     window.location.href = redirectUri;
   } catch (error) {
     console.error("Google Sign In Error:", error);
