@@ -60,48 +60,41 @@ const LogInModal = (props) => {
 
   const handleLogInSubmit = async (e) => {
     e.preventDefault();
+    console.log('[LogIn] Attempting login with data:', logInData);
     try {
+      console.log('[LogIn] Calling signIn API...');
       const response = await signIn(logInData);
+      console.log('[LogIn] SignIn API response:', response);
+      
+      console.log('[LogIn] Fetching user data...');
       const userData = await getUser();
+      console.log('[LogIn] User data received:', userData);
+      
       trackEvent('login', { method: 'email' });
       dispatch(login());
       dispatch(setUser(userData));
+      
+      console.log('[LogIn] Starting redirect process...');
       handleRedirect();
     } catch (error) {
+      console.error('[LogIn] Login error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+        fullError: error
+      });
       trackEvent('login_error', { 
         method: 'email',
         error: error.response?.data || error.message 
       });
-      console.error("Error logging in:", error.response?.data || error.message);
       setErrorAlertModalIsOpen(true);
     }
   };
 
-  const handleGoogleLogin = async (e) => {
+  const handleGoogleLogin = (e) => {
     e.preventDefault();
-    googleSignIn();
     trackEvent('login', { method: 'google' });
-
-    const checkToken = () => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        const fetchUserData = async () => {
-          try {
-            const userData = await getUser();
-            dispatch(login());
-            dispatch(setUser(userData));
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-            setErrorAlertModalIsOpen(true);
-          }
-        };
-        fetchUserData();
-      } else {
-        setErrorAlertModalIsOpen(true);
-      }
-    };
-
-    setTimeout(checkToken, 2000);
+    googleSignIn();
   };
 
   return (

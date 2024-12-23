@@ -44,27 +44,37 @@ export const instanceWithToken = axios.create({
 instanceWithToken.interceptors.request.use(
   (config) => {
     const accessToken = getCookie("access_token");
+    console.log('[Axios] Request interceptor - Access token:', accessToken);
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
-
-    // Origin 헤더가 자동으로 설정되지 않도록 삭제
-    if (config.headers.hasOwnProperty("Origin")) {
-      delete config.headers["Origin"];
-    }
-
-    if (process.env.NODE_ENV === "production") {
-      config.url = config.url.replace("http://", "https://");
-    }
-
+    console.log('[Axios] Request config:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers
+    });
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('[Axios] Request interceptor error:', error);
+    return Promise.reject(error);
+  }
 );
 
 instanceWithToken.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('[Axios] Response interceptor - Success:', {
+      status: response.status,
+      data: response.data
+    });
+    return response;
+  },
   async (error) => {
+    console.error('[Axios] Response interceptor - Error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     const originalRequest = error.config;
 
     if (!error.response) {

@@ -5,17 +5,24 @@ import { removeCookie } from "../utils/cookie";
 
 // User 관련 API들
 export const signIn = async (data) => {
+  console.log('[API] Attempting signIn with data:', data);
   try {
+    console.log('[API] Making POST request to /user/auth/');
     const response = await instance.post("/user/auth/", data);
+    console.log('[API] SignIn response:', response);
+    
     if (response.status === 200) {
+      console.log('[API] SignIn successful');
       return response.data;
     }
     throw new Error("Login failed");
   } catch (error) {
-    console.error(
-      "[ERROR] error while signing in:",
-      error.response?.data || error.message
-    );
+    console.error('[API] SignIn error details:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      fullError: error
+    });
     throw error;
   }
 };
@@ -37,12 +44,18 @@ export const signUp = async (data) => {
 };
 
 export const getUser = async () => {
+  console.log('[API] Attempting to get user data');
   try {
     const response = await instanceWithToken.get("/user/auth/");
-    console.log("USER GET SUCCESS");
+    console.log('[API] GetUser response:', response);
     return response.data;
   } catch (error) {
-    console.error("[ERROR] error while getting user:", error);
+    console.error('[API] GetUser error details:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      fullError: error
+    });
     throw error;
   }
 };
@@ -266,7 +279,6 @@ export const googleSignIn = async () => {
 
     const redirectUri = "https://api.referto.site/api/user/google/login/";
 
-    console.log("Redirecting to:", redirectUri);
     window.location.href = redirectUri;
   } catch (error) {
     console.error("Google Sign In Error:", error);
