@@ -262,10 +262,8 @@ export const googleSignIn = async () => {
     removeCookie("access_token");
     removeCookie("refresh_token");
 
-    const backendUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://api.referto.site"
-        : "http://localhost:8000";
+    const backendUrl = "https://api.referto.site";
+
     const redirectUri = `${backendUrl}/api/user/google/login/`;
 
     window.location.href = redirectUri;

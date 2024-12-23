@@ -3,10 +3,7 @@ import { getCookie, removeCookie } from "../utils/cookie";
 import { store } from "../redux/store";
 import { logout } from "../redux/authSlice";
 
-const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://api.referto.site/api"
-    : "http://localhost:8000/api";
+const BASE_URL = "https://api.referto.site/api";
 
 let isRefreshing = false;
 let refreshSubscribers = [];
