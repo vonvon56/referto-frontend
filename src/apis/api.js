@@ -17,6 +17,16 @@ export const signIn = async (data) => {
     
     if (response.status === 200) {
       console.log('[API] SignIn successful');
+      
+      // 토큰을 쿠키에 저장
+      const { access, refresh } = response.data;
+      document.cookie = `access_token=${access}; path=/; secure; samesite=Lax`;
+      document.cookie = `refresh_token=${refresh}; path=/; secure; samesite=Lax`;
+      
+      // axios 인스턴스의 기본 헤더에 토큰 설정
+      instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+      
+      console.log('[API] Tokens saved and headers set');
       return response.data;
     }
     throw new Error("Login failed");
@@ -50,6 +60,9 @@ export const signUp = async (data) => {
 export const getUser = async () => {
   console.log('[API] Attempting to get user data');
   try {
+    const accessToken = getCookie('access_token');
+    console.log('[API] Current access token:', accessToken);
+    
     const response = await instanceWithToken.get("/user/auth/");
     console.log('[API] GetUser response:', response);
     return response.data;
