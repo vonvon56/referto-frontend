@@ -190,7 +190,7 @@ export const deletePaper = async (paper_id) => {
 
 export const uploadPaperInfo = async (paper_id) => {
   const response = await instanceWithToken.post(`/paperinfo/${paper_id}/`);
-  if (response.status === 200) {
+  if (response.status === 201) {
     console.log("PAPERINFO UPLOAD SUCCESS");
     return response.data;
   } else {

@@ -91,6 +91,12 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
 
         try {
           const response_paper = await uploadPaper(formData, config);
+          console.log("Upload paper response:", response_paper);
+          
+          if (!response_paper || !response_paper.paper_id) {
+            throw new Error("Paper ID not found in response");
+          }
+          
           // Generate paper info after successful upload
           await uploadPaperInfo(response_paper.paper_id);
           trackEvent('file_upload_success', { 
