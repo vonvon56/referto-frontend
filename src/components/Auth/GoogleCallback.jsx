@@ -1,51 +1,52 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { login, logout, setUser } from '../../redux/authSlice';
 import { getUser, getAssignments } from '../../apis/api';
+import { login, setUser } from '../../redux/authSlice';
+import { removeCookie } from '../../utils/cookie';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const handleAuthSuccess = async () => {
       try {
-        const params = new URLSearchParams(location.search);
-        const accessToken = params.get('access_token');
-        const refreshToken = params.get('refresh_token');
+        console.log('[GoogleCallback] Starting auth success handling');
+        const userData = await getUser();
+        console.log('[GoogleCallback] User data received:', userData);
         
-        if (!accessToken || !refreshToken) {
-          throw new Error('토큰이 없습니다');
+        if (!userData.email) {
+          console.error('[GoogleCallback] No email in user data:', userData);
+          throw new Error('No email in user data');
         }
 
-        document.cookie = `access_token=${accessToken}; path=/`;
-        document.cookie = `refresh_token=${refreshToken}; path=/`;
-        
-        const user = await getUser();
         dispatch(login());
-        dispatch(setUser(user));
+        dispatch(setUser(userData));
         
+        console.log('[GoogleCallback] Redux state after dispatch:', store.getState());
+
         const assignments = await getAssignments();
-        if (assignments?.length > 0) {
+        console.log('[GoogleCallback] Assignments received:', assignments);
+        
+        if (assignments && assignments.length > 0) {
           navigate(`/${assignments[0].assignment_id}`);
         } else {
           navigate('/');
         }
       } catch (error) {
-        console.error('[GoogleCallback] Error:', error);
+        console.error('[GoogleCallback] Auth success handling error:', error);
         dispatch(logout());
-        navigate('/account/login', { 
-          state: { error: '로그인에 실패했습니다. 다시 시도해주세요.' } 
-        });
+        removeCookie('access_token');
+        removeCookie('refresh_token');
+        navigate('/account/login');
       }
     };
 
-    handleCallback();
-  }, [navigate, location, dispatch]);
+    handleAuthSuccess();
+  }, [dispatch, navigate]);
 
-  return <div>로그인 처리중...</div>;
+  return <div>구글 로그인 처리중...</div>;
 };
 
 export default GoogleCallback; 

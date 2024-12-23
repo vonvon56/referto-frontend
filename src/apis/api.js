@@ -7,6 +7,10 @@ import { removeCookie } from "../utils/cookie";
 export const signIn = async (data) => {
   console.log('[API] Attempting signIn with data:', data);
   try {
+    store.dispatch(logout());
+    removeCookie("access_token");
+    removeCookie("refresh_token");
+
     console.log('[API] Making POST request to /user/auth/');
     const response = await instance.post("/user/auth/", data);
     console.log('[API] SignIn response:', response);

@@ -9,6 +9,7 @@ import alertCircle from "../../assets/images/alert-circle.svg";
 import { useDispatch } from 'react-redux';
 import { login, setUser } from '../../redux/authSlice';
 import { trackEvent } from '../../utils/analytics';
+import store from '../../redux/store';
 
 const LogInModal = (props) => {
   const inputRef = useRef(null);
@@ -60,6 +61,7 @@ const LogInModal = (props) => {
 
   const handleLogInSubmit = async (e) => {
     e.preventDefault();
+    console.log('[LogIn] Current Redux State:', store.getState());
     console.log('[LogIn] Attempting login with data:', logInData);
     try {
       console.log('[LogIn] Calling signIn API...');
@@ -76,6 +78,8 @@ const LogInModal = (props) => {
       
       console.log('[LogIn] Starting redirect process...');
       handleRedirect();
+      
+      console.log('[LogIn] Post-login Redux State:', store.getState());
     } catch (error) {
       console.error('[LogIn] Login error details:', {
         status: error.response?.status,

@@ -5,14 +5,23 @@ import { Menu, ChevronLeft } from "lucide-react";
 import logo from "../../assets/images/logo.svg";
 import userprofile from "../../assets/images/user.svg";
 import { removeCookie } from "../../utils/cookie";
+import { useEffect } from 'react';
 
 const Header = ({ isSidebarOpen, setIsSidebarOpen, isDetailPage, firstAssignmentId }) => {
   const dispatch = useDispatch();
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const userEmail = useSelector((state) => state.auth.user?.email);
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
+
+  useEffect(() => {
+    console.log('[Header] Current auth state:', {
+      isLoggedIn: isUserLoggedIn,
+      user: user,
+      email: user?.email
+    });
+  }, [isUserLoggedIn, user]);
 
   const handleOpenModal = () => {
     navigate('/account/login');
@@ -78,10 +87,10 @@ const Header = ({ isSidebarOpen, setIsSidebarOpen, isDetailPage, firstAssignment
       </div>
       <div className="inline-flex items-center justify-end gap-2 sm:gap-2.5 relative self-stretch flex-[0_0_auto]">
         <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 relative self-stretch flex-[0_0_auto]">
-          {isUserLoggedIn ? (
+          {isUserLoggedIn && user ? (
             <div className="flex flex-row items-center">
               <div className="w-fit mx-3 font-[Pretendard] font-medium text-neutral-50 text-base sm:text-lg text-center hidden sm:block">
-                {userEmail}
+                {user.email || '이메일 없음'}
               </div>
               <img alt="profile" src={userprofile} className="w-5 h-5 sm:w-6 sm:h-6 mr-5 hidden sm:block" />
               <Link
