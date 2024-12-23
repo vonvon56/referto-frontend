@@ -13,27 +13,46 @@ export const signIn = async (data) => {
 
     console.log('[API] Making POST request to /user/auth/');
     const response = await instance.post("/user/auth/", data);
-    console.log('[API] SignIn response:', response);
+    console.log('[API] SignIn response:', response.data);
     
     if (response.status === 200) {
       console.log('[API] SignIn successful');
       
-      // 토큰을 쿠키에 저장
-      const { access, refresh } = response.data.token;
-      console.log('[API] Tokens received:', { access, refresh });
+      // response.data 구조 확인
+      const { token } = response.data;
+      console.log('[API] Full token object:', token);
       
-      setCookie("access_token", access);
-      setCookie("refresh_token", refresh);
+      if (!token || !token.access || !token.refresh) {
+        console.error('[API] Invalid token structure:', token);
+        throw new Error('Invalid token structure in response');
+      }
+
+      // 토큰을 쿠키에 저장
+      setCookie("access_token", token.access);
+      setCookie("refresh_token", token.refresh);
       
       // axios 인스턴스의 기본 헤더에 토큰 설정
-      instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+      instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${token.access}`;
       
-      console.log('[API] Tokens saved. Verifying access_token cookie:', getCookie("access_token"));
+      // 토큰 저장 확인
+      const savedToken = getCookie("access_token");
+      console.log('[API] Saved access token:', savedToken);
+      
+      if (!savedToken) {
+        console.error('[API] Failed to save access token');
+        throw new Error('Failed to save access token');
+      }
+
       return response.data;
     }
     throw new Error("Login failed");
   } catch (error) {
-    console.error('[API] SignIn error details:', error);
+    console.error('[API] SignIn error details:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      fullError: error
+    });
     throw error;
   }
 };

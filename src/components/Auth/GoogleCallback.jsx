@@ -1,28 +1,38 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getUser, getAssignments } from '../../apis/api';
 import { login, logout, setUser } from '../../redux/authSlice';
-import { getCookie, removeCookie } from '../../utils/cookie';
+import { getCookie, removeCookie, setCookie } from '../../utils/cookie';
 import { store } from '../../redux/store';
 import { instanceWithToken } from '../../apis/axios';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
     const handleAuthSuccess = async () => {
       try {
         console.log('[GoogleCallback] Starting auth success handling');
         
-        const accessToken = getCookie('access_token');
-        console.log('[GoogleCallback] Current access token:', accessToken);
+        const params = new URLSearchParams(location.search);
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
         
-        if (!accessToken) {
-          console.error('[GoogleCallback] No access token found');
-          throw new Error('No access token found');
+        console.log('[GoogleCallback] Tokens from URL:', { accessToken, refreshToken });
+        
+        if (!accessToken || !refreshToken) {
+          console.error('[GoogleCallback] Missing tokens in URL');
+          throw new Error('Missing tokens in URL');
         }
+
+        setCookie("access_token", accessToken);
+        setCookie("refresh_token", refreshToken);
+        
+        const savedToken = getCookie('access_token');
+        console.log('[GoogleCallback] Saved access token:', savedToken);
 
         instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         console.log('[GoogleCallback] Set Authorization header:', `Bearer ${accessToken}`);
@@ -58,7 +68,7 @@ const GoogleCallback = () => {
     };
 
     handleAuthSuccess();
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, location]);
 
   return <div>구글 로그인 처리중...</div>;
 };
