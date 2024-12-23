@@ -139,10 +139,10 @@ const LogInModal = (props) => {
                 로그인하기
               </button>
             </form>
-            <div className="text-center font-['Pretendard'] text-gray-700">
+            {/* <div className="text-center font-['Pretendard'] text-gray-700">
               or
-            </div>
-            <div className="w-full flex flex-col justify-center items-center gap-2 my-2">
+            </div> */}
+            {/* <div className="w-full flex flex-col justify-center items-center gap-2 my-2">
               <button
                 className="w-full h-11 bg-white border-2 border-neutral-200 rounded-lg flex justify-center items-center gap-2.5"
                 onClick={handleGoogleLogin}
@@ -154,7 +154,7 @@ const LogInModal = (props) => {
                   </div>
                 </div>
               </button>
-              {/* <button
+              <button
                 className="w-full h-11 bg-[#03C75A] rounded-lg flex justify-center items-center gap-2.5"
                 onClick={handleNaverLogin}
               >
@@ -175,8 +175,8 @@ const LogInModal = (props) => {
                     카카오로 시작하기
                   </div>
                 </div>
-              </button> */}
-            </div>
+              </button>
+            </div> */}
             <div className="text-center font-['Pretendard'] text-neutral-700">
               회원이 아니신가요?
             </div>
