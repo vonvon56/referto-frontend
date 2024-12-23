@@ -262,15 +262,12 @@ export const googleSignIn = async () => {
     removeCookie("access_token");
     removeCookie("refresh_token");
 
-    // 개발 환경에서는 무조건 로컬 호스트 사용
-    // 배포 환경에선 배포 서버 사용
     const backendUrl =
       process.env.NODE_ENV === "production"
         ? "https://api.referto.site"
         : "http://localhost:8000";
     const redirectUri = `${backendUrl}/api/user/google/login/`;
 
-    console.log("Redirecting to:", redirectUri);
     window.location.href = redirectUri;
   } catch (error) {
     console.error("Google Sign In Error:", error);

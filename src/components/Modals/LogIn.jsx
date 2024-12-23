@@ -77,31 +77,10 @@ const LogInModal = (props) => {
     }
   };
 
-  const handleGoogleLogin = async (e) => {
+  const handleGoogleLogin = (e) => {
     e.preventDefault();
-    googleSignIn();
     trackEvent('login', { method: 'google' });
-
-    const checkToken = () => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        const fetchUserData = async () => {
-          try {
-            const userData = await getUser();
-            dispatch(login());
-            dispatch(setUser(userData));
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-            setErrorAlertModalIsOpen(true);
-          }
-        };
-        fetchUserData();
-      } else {
-        setErrorAlertModalIsOpen(true);
-      }
-    };
-
-    setTimeout(checkToken, 2000);
+    googleSignIn();
   };
 
   return (
