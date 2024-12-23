@@ -79,9 +79,7 @@ export const getUser = async () => {
     const accessToken = getCookie('access_token');
     console.log('[API] Token from cookie:', accessToken);
     
-    const response = await instanceWithToken.post("/user/auth/", {
-      access_token: accessToken
-    });
+    const response = await instanceWithToken.get("/user/auth/");
     console.log('[API] GetUser response:', response);
     return response.data;
   } catch (error) {
