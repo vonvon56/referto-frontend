@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getUser, getAssignments } from '../../apis/api';
 import { login, logout, setUser } from '../../redux/authSlice';
-import { removeCookie } from '../../utils/cookie';
+import { getCookie, removeCookie } from '../../utils/cookie';
 import { store } from '../../redux/store';
+import { instanceWithToken } from '../../apis/axios';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
@@ -14,12 +15,24 @@ const GoogleCallback = () => {
     const handleAuthSuccess = async () => {
       try {
         console.log('[GoogleCallback] Starting auth success handling');
+        
+        const accessToken = getCookie('access_token');
+        console.log('[GoogleCallback] Current access token:', accessToken);
+        
+        if (!accessToken) {
+          console.error('[GoogleCallback] No access token found');
+          throw new Error('No access token found');
+        }
+
+        instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        console.log('[GoogleCallback] Set Authorization header:', `Bearer ${accessToken}`);
+
         const userData = await getUser();
         console.log('[GoogleCallback] User data received:', userData);
         
-        if (!userData.email) {
-          console.error('[GoogleCallback] No email in user data:', userData);
-          throw new Error('No email in user data');
+        if (!userData || !userData.email) {
+          console.error('[GoogleCallback] Invalid user data:', userData);
+          throw new Error('Invalid user data');
         }
 
         dispatch(login());

@@ -1,7 +1,7 @@
 import { instance, instanceWithToken } from "./axios";
 import { store } from "../redux/store";
 import { logout } from "../redux/authSlice";
-import { getCookie, removeCookie } from "../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../utils/cookie";
 
 // User 관련 API들
 export const signIn = async (data) => {
@@ -19,24 +19,21 @@ export const signIn = async (data) => {
       console.log('[API] SignIn successful');
       
       // 토큰을 쿠키에 저장
-      const { access, refresh } = response.data;
-      document.cookie = `access_token=${access}; path=/; secure; samesite=Lax`;
-      document.cookie = `refresh_token=${refresh}; path=/; secure; samesite=Lax`;
+      const { access, refresh } = response.data.token;
+      console.log('[API] Tokens received:', { access, refresh });
+      
+      setCookie("access_token", access);
+      setCookie("refresh_token", refresh);
       
       // axios 인스턴스의 기본 헤더에 토큰 설정
       instanceWithToken.defaults.headers.common['Authorization'] = `Bearer ${access}`;
       
-      console.log('[API] Tokens saved and headers set');
+      console.log('[API] Tokens saved. Verifying access_token cookie:', getCookie("access_token"));
       return response.data;
     }
     throw new Error("Login failed");
   } catch (error) {
-    console.error('[API] SignIn error details:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-      fullError: error
-    });
+    console.error('[API] SignIn error details:', error);
     throw error;
   }
 };
@@ -80,17 +77,12 @@ export const getUser = async () => {
 // Assignments 관련 API들
 export const getAssignments = async () => {
   try {
+    console.log('[API] Getting assignments. Current token:', getCookie('access_token'));
     const response = await instanceWithToken.get("/assignments/");
-    if (response.status === 200) {
-      console.log("ASSIGNMENTS GET SUCCESS");
-      return response.data;
-    }
-    throw new Error("Failed to get assignments");
+    console.log('[API] Assignments response:', response);
+    return response.data;
   } catch (error) {
-    console.error(
-      "[ERROR] error while getting assignments:",
-      error.response?.data || error.message
-    );
+    console.error('[API] Error getting assignments:', error);
     throw error;
   }
 };
