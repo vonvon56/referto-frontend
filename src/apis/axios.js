@@ -45,14 +45,21 @@ instanceWithToken.interceptors.request.use(
   (config) => {
     const accessToken = getCookie("access_token");
     console.log('[Axios] Request interceptor - Access token:', accessToken);
+    
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
+      console.log('[Axios] Added Authorization header:', config.headers["Authorization"]);
+    } else {
+      console.warn('[Axios] No access token found in cookies');
     }
-    console.log('[Axios] Request config:', {
+
+    console.log('[Axios] Full request config:', {
       url: config.url,
       method: config.method,
-      headers: config.headers
+      headers: config.headers,
+      withCredentials: config.withCredentials
     });
+
     return config;
   },
   (error) => {
@@ -141,3 +148,7 @@ instanceWithToken.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+instanceWithToken.defaults.withCredentials = true;
+instanceWithToken.defaults.headers.common['Accept'] = 'application/json';
+instanceWithToken.defaults.headers.common['Content-Type'] = 'application/json';
