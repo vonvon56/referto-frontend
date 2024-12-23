@@ -9,7 +9,7 @@ import alertCircle from "../../assets/images/alert-circle.svg";
 import { useDispatch } from 'react-redux';
 import { login, setUser } from '../../redux/authSlice';
 import { trackEvent } from '../../utils/analytics';
-import store from '../../redux/store';
+import { store } from '../../redux/store';
 
 const LogInModal = (props) => {
   const inputRef = useRef(null);

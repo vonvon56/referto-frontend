@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { getUser, getAssignments } from '../../apis/api';
 import { login, setUser } from '../../redux/authSlice';
 import { removeCookie } from '../../utils/cookie';
+import { store } from '../../redux/store';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
