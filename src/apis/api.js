@@ -1,7 +1,7 @@
 import { instance, instanceWithToken } from "./axios";
 import { store } from "../redux/store";
 import { logout } from "../redux/authSlice";
-import { removeCookie } from "../utils/cookie";
+import { getCookie, removeCookie } from "../utils/cookie";
 
 // User 관련 API들
 export const signIn = async (data) => {
