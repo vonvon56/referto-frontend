@@ -92,7 +92,7 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
         try {
           const response_paper = await uploadPaper(formData, config);
           // Generate paper info after successful upload
-          await uploadPaperInfo(response_paper.id);
+          await uploadPaperInfo(response_paper.paper_id);
           trackEvent('file_upload_success', { 
             page: 'main',
             file_index: i + 1,
