@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getUser, getAssignments } from '../../apis/api';
-import { login, setUser } from '../../redux/authSlice';
+import { login, logout, setUser } from '../../redux/authSlice';
 import { removeCookie } from '../../utils/cookie';
 import { store } from '../../redux/store';
 
