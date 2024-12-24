@@ -28,8 +28,8 @@ const HomePage = ({ isUserLoggedIn, setIsUserLoggedIn, isSidebarOpen, setIsSideb
           const paperInfos = await getPaperInfos(assignmentId);
           setReferencesList(paperInfos);
         } catch (error) {
-          console.error("Error fetching paper infos:", error);
           setReferencesList([]);
+          throw error;
         }
       };
       getReferencesAPI();

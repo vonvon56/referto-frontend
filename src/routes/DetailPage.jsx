@@ -42,10 +42,8 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
         }
 
         if (paperId) {
-          console.log("Fetching data for paperId:", paperId);
           const notesData = await getNotes(paperId);
           if (isMounted && notesData) {
-            console.log("Setting initial notes:", notesData);
             setNotes(Array.isArray(notesData) ? notesData : []);
             notesRef.current = Array.isArray(notesData) ? notesData : [];
           }
@@ -57,10 +55,10 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
           }
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         if (isMounted) {
           setNotes([]);
         }
+        throw error;
       }
     };
   
@@ -70,13 +68,6 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
       isMounted = false;
     };
   }, [paperId, setIsDetailPage]);
-  
-  useEffect(() => {
-    if (notes && notes.length > 0) {
-      console.log("Notes updated:", notes);
-    }
-  }, [notes]);
-  
 
   const handlePrevPage = async () => {
     trackEvent('navigate_reference', { direction: 'prev' });
@@ -85,11 +76,8 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
       const newReferenceId = newReference["paperInfo_id"];
       const newPaperId = newReference["paper"];
 
-      console.log("Navigating to previous page:", newReferenceId);
-
       try {
         const notesData = await getNotes(newPaperId);
-        console.log("Fetched notes for previous page:", notesData);
         notesRef.current = Array.isArray(notesData) ? notesData : [];
         setNotes(notesRef.current);
         
@@ -105,8 +93,8 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
           replace: true
         });
       } catch (error) {
-        console.error("Error fetching notes for previous page:", error);
         setNotes([]);
+        throw error;
       }
     }
   };
@@ -118,11 +106,8 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
       const newReferenceId = newReference["paperInfo_id"];
       const newPaperId = newReference["paper"];
 
-      console.log("Navigating to next page:", newReferenceId);
-
       try {
         const notesData = await getNotes(newPaperId);
-        console.log("Fetched notes for next page:", notesData);
         notesRef.current = Array.isArray(notesData) ? notesData : [];
         setNotes(notesRef.current);
         
@@ -138,8 +123,8 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
           replace: true
         });
       } catch (error) {
-        console.error("Error fetching notes for next page:", error);
         setNotes([]);
+        throw error;
       }
     }
   };
@@ -151,7 +136,7 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
       setNotes(updatedNotes);
       trackEvent('delete_note', { page: 'detail' });
     } catch (error) {
-      console.error("Error deleting note:", error);
+      throw error;
     }
   };
 
@@ -184,19 +169,9 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
   };
 
   const handleNoteClick = (note) => {
-    console.log('=== Note Click Debug Logs ===');
-    console.log('1. Clicked note:', note);
-    console.log('2. Note highlight areas:', note.highlightAreas);
-    
     if (note.highlightAreas && note.highlightAreas.length > 0) {
         const highlightArea = note.highlightAreas[0];
-        console.log('3. Selected highlight area:', highlightArea);
-        console.log('4. Page Index:', highlightArea.pageIndex);
-        console.log('5. Top position:', highlightArea.top);
-        
         jumpToHighlightArea(highlightArea);
-    } else {
-        console.warn('No highlight areas found in the note');
     }
   };
 

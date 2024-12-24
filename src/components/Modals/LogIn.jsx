@@ -45,7 +45,7 @@ const LogInModal = (props) => {
         const assignments = await getAssignments(email);
         return assignments[0]["assignment_id"]; // Return the first id
       } catch (error) {
-        console.error("Error fetching assignments:", error);
+        throw error;
       }
     };
 
@@ -54,39 +54,21 @@ const LogInModal = (props) => {
 
     if (firstAssignmentId) {
       navigate(`/${firstAssignmentId}`);
-    } else {
-      console.error("First assignment ID is null");
     }
   };
 
   const handleLogInSubmit = async (e) => {
     e.preventDefault();
-    console.log('[LogIn] Current Redux State:', store.getState());
-    console.log('[LogIn] Attempting login with data:', logInData);
     try {
-      console.log('[LogIn] Calling signIn API...');
       const response = await signIn(logInData);
-      console.log('[LogIn] SignIn API response:', response);
-      
-      console.log('[LogIn] Fetching user data...');
       const userData = await getUser();
-      console.log('[LogIn] User data received:', userData);
       
       trackEvent('login', { method: 'email' });
       dispatch(login());
       dispatch(setUser(userData));
       
-      console.log('[LogIn] Starting redirect process...');
       handleRedirect();
-      
-      console.log('[LogIn] Post-login Redux State:', store.getState());
     } catch (error) {
-      console.error('[LogIn] Login error details:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-        fullError: error
-      });
       trackEvent('login_error', { 
         method: 'email',
         error: error.response?.data || error.message 

@@ -42,7 +42,7 @@ const SignUpModal = ( props ) => {
         const assignments = await getAssignments(email);
         return assignments[0]["assignment_id"]; // Return the first id
       } catch (error) {
-        console.error("Error fetching assignments:", error);
+        throw error;
       }
     };
 
@@ -51,8 +51,6 @@ const SignUpModal = ( props ) => {
 
     if (firstAssignmentId) {
       navigate(`/${firstAssignmentId}`);
-    } else {
-      console.error("First assignment ID is null");
     }
   };
 
@@ -72,7 +70,6 @@ const SignUpModal = ( props ) => {
         method: 'email',
         error: error.message 
       });
-      console.error('Error signing up:', error);
       setErrorAlertModalIsOpen(true);
     }
   };
@@ -90,7 +87,6 @@ const SignUpModal = ( props ) => {
         method: 'google',
         error: error.message 
       });
-      console.error('Error signing up with Google:', error);
       setErrorAlertModalIsOpen(true);
     }
   }

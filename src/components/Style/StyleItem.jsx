@@ -10,10 +10,9 @@ const StyleItem = ({
   const handleSelect = async () => {
     try {
       const data = await updateAssignment(selectedAssignmentId, {reference_type: styleName});
-      console.log('Assignment reference_type updated successfully:', data);
       setSelectedStyleName(styleName);
     } catch (error) {
-      console.error('Error updating assignment reference_type:', error);
+      throw error;
     }
   };
 

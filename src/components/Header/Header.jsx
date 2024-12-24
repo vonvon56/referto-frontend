@@ -15,14 +15,6 @@ const Header = ({ isSidebarOpen, setIsSidebarOpen, isDetailPage, firstAssignment
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
 
-  useEffect(() => {
-    console.log('[Header] Current auth state:', {
-      isLoggedIn: isUserLoggedIn,
-      user: user,
-      email: user?.email
-    });
-  }, [isUserLoggedIn, user]);
-
   const handleOpenModal = () => {
     navigate('/account/login');
   };

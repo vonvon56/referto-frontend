@@ -70,7 +70,6 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
             page: 'landing',
             error: error.message
           });
-          console.error('Landing page upload error:', error);
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
         }
@@ -91,7 +90,6 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
 
         try {
           const response_paper = await uploadPaper(formData, config);
-          console.log("Upload paper response:", response_paper);
           
           if (!response_paper || !response_paper.data || !response_paper.data.paper_id) {
             throw new Error("Paper ID not found in response");
@@ -110,7 +108,6 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
             file_index: i + 1,
             error: error.message
           });
-          console.error('Error uploading file:', error);
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
           return;
@@ -124,7 +121,6 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
         window.location.reload();
       }, 1000);
     } catch (error) {
-      console.error('Process error:', error);
       setErrorAlertModalIsOpen(true);
       setUploadStatus(false);
     }

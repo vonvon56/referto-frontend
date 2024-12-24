@@ -44,48 +44,26 @@ export const instanceWithToken = axios.create({
 instanceWithToken.interceptors.request.use(
   (config) => {
     const accessToken = getCookie("access_token");
-    console.log('[Axios] Request interceptor - Access token:', accessToken);
     
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
-      console.log('[Axios] Added Authorization header:', config.headers["Authorization"]);
-    } else {
-      console.warn('[Axios] No access token found in cookies');
     }
-
-    console.log('[Axios] Full request config:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers,
-      withCredentials: config.withCredentials
-    });
 
     return config;
   },
   (error) => {
-    console.error('[Axios] Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
 
 instanceWithToken.interceptors.response.use(
   (response) => {
-    console.log('[Axios] Response interceptor - Success:', {
-      status: response.status,
-      data: response.data
-    });
     return response;
   },
   async (error) => {
-    console.error('[Axios] Response interceptor - Error:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
     const originalRequest = error.config;
 
     if (!error.response) {
-      console.error("Network error:", error);
       if (process.env.NODE_ENV === "production") {
         store.dispatch(logout());
         window.location.replace("/account/login");
@@ -126,7 +104,6 @@ instanceWithToken.interceptors.response.use(
 
         return axios(originalRequest);
       } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError);
         isRefreshing = false;
 
         removeCookie("access_token");

@@ -52,11 +52,10 @@ const SidebarItem = ({
     setIsOpen(false)
     try {
       const data = await updateAssignment(selectedAssignmentId , {name: onChangeValue});
-      console.log('Assignment name updated successfully:', data);
       setContent(data.name);
       window.location.reload();
     } catch (error) {
-      console.error('Error updating assignment name:', error);
+      throw error;
     }
   };
 
@@ -84,7 +83,6 @@ const SidebarItem = ({
       await deleteAssignment(assignmentId);
       trackEvent('delete_assignment', { assignment_id: assignmentId });
       setDeleteModalIsOpen(false);
-      console.log('Assignment deleted successfully');
 
       if ((currentIndex + 1) === assignmentsList.length) {
         window.location.href = (`/${assignmentsList[currentIndex - 1].assignment_id}`)
@@ -92,7 +90,7 @@ const SidebarItem = ({
         window.location.href = (`/${assignmentsList[currentIndex + 1].assignment_id}`)
       }
     } catch (error) {
-      console.error('Error deleting assignment:', error);
+      throw error;
     }
   };
 

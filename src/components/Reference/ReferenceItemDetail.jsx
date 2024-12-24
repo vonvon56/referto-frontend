@@ -77,7 +77,7 @@ const ReferenceItemDetail = ({
       await updatePaperInfo(referenceId, newContent);
       setIsEdit(false);
     } catch (error) {
-      console.error("Error updating content:", error);
+      throw error;
     }
   };
 
@@ -93,7 +93,7 @@ const ReferenceItemDetail = ({
       await deletePaper(paperId);
       navigate(`/${assignmentId}`);
     } catch (error) {
-      console.error("Error deleting paper:", error);
+      throw error;
     }
   };
 

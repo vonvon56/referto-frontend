@@ -42,7 +42,6 @@ function App() {
           }
         }
       } catch (error) {
-        console.error('Authentication error:', error);
         dispatch(logout());
         removeCookie('access_token');
         removeCookie('refresh_token');

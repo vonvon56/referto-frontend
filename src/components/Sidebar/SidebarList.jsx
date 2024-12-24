@@ -19,7 +19,7 @@ const SidebarList = (props) => {
         const userData = await getUser();
         setUser(userData);
       } catch (error) {
-        console.error('Error fetching user:', error);
+        throw error;
       }
     };
     if (getCookie("access_token")) {
@@ -33,7 +33,7 @@ const SidebarList = (props) => {
           const assignments = await getAssignments(user);
           setAssignmentsList(assignments);
         } catch (error) {
-          console.error('Error fetching assignments:', error);
+          throw error;
         }
       }
     fetchAssignments()
@@ -50,7 +50,7 @@ const SidebarList = (props) => {
       setAssignmentsList([...assignmentsList, newAssignment]);
       navigate(`/${newAssignment.assignment_id}`);
     } catch (error) {
-      console.error('Error creating assignment:', error);
+      throw error;
     }
   }
 
