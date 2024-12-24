@@ -55,9 +55,6 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
           }
         }
       } catch (error) {
-        if (isMounted) {
-          setNotes([]);
-        }
         throw error;
       }
     };
@@ -93,7 +90,6 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
           replace: true
         });
       } catch (error) {
-        setNotes([]);
         throw error;
       }
     }
@@ -123,7 +119,6 @@ const DetailPage = ({ setIsDetailPage, isUserLoggedIn, setIsUserLoggedIn }) => {
           replace: true
         });
       } catch (error) {
-        setNotes([]);
         throw error;
       }
     }

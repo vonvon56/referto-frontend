@@ -25,32 +25,20 @@ const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
   }, [onClose]);
 
   useEffect(() => {
-    console.log('=== ReferenceMemo paperId change Debug ===');
-    console.log('Previous paperId:', currentPaperIdRef.current);
-    console.log('New paperId:', paperId);
-    
-    // Clear memo content if paperId changed
     if (currentPaperIdRef.current !== paperId) {
-      console.log('PaperId changed, clearing memo content');
       setMemoContent("");
       currentPaperIdRef.current = paperId;
     }
 
     const getMemoAPI = async () => {
-      console.log('=== ReferenceMemo getMemoAPI Debug ===');
-      console.log('1. Fetching memo for paperId:', paperId);
       try {
         const memo = await getMemo(paperId);
-        console.log('2. API Response memo:', memo);
         if (memo && memo.content) {
-          console.log('3. Setting memo content:', memo.content);
           setMemoContent(memo.content);
         } else {
-          console.log('3. No memo content found, setting empty string');
           setMemoContent("");
         }
       } catch (error) {
-        console.error('Error fetching memo:', error);
         setMemoContent("");
       }
     };
@@ -63,17 +51,13 @@ const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
   }, [paperId]);
 
   const handleContentChange = async (e) => {
-    console.log('=== ReferenceMemo handleContentChange Debug ===');
     setIsSaving(true);
     e.preventDefault();
     const newContent = e.target.value;
-    console.log('1. New content for paperId:', paperId, newContent);
     setMemoContent(newContent);
 
     try {
-      console.log('2. Updating memo for paperId:', paperId);
-      const response = await updateMemo(paperId, { content: newContent });
-      console.log('3. Update response:', response);
+      await updateMemo(paperId, { content: newContent });
     } catch (error) {
       console.error('Error updating memo:', error);
     }
@@ -110,9 +94,9 @@ const ReferenceMemo = ({ content, paperId, onClose = () => {} }) => {
       </div>
       <div className="self-stretch text-neutral-900 text-sm sm:text-base font-medium font-['Pretendard'] leading-normal py-2 flex-grow">
         <textarea
-          key={paperId} 
+          key={paperId}
           placeholder="여기에 필요한 메모를 작성하세요. 복사 시 참고문헌이 함께 복사됩니다."
-          value={memoContent} 
+          value={memoContent}
           onChange={handleContentChange}
           className="font-[Pretendard] font-md border-2 border-neutral-300 rounded-md w-full h-[150px] sm:h-[200px] px-2 py-2 focus:outline-none focus:border-neutral-500 resize-none placeholder:text-neutral-400 placeholder:font-normal text-sm sm:text-base"
           rows="10"
