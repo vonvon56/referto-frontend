@@ -214,11 +214,9 @@ const FileUploadModal = ({
       </div>
       {uploadStatus && <Loading />}
       {errorAlertModalIsOpen && (
-        <AlertModal
-          icon={alertCircle}
-          color={"#EF4444"}
-          handleAlertCancel={handleErrorAlertCancel}
-          text={"파일 업로드 중 에러가 발생했습니다. 다시 시도해주세요."}
+        <SuccessModal
+          text={"파일 업로드 성공!"}
+          setModalOpen={setUploadSuccessModalIsOpen}
         />
       )}
       {uploadSuccessModalIsOpen && (
