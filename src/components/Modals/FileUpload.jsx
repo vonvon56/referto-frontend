@@ -6,9 +6,14 @@ import Loading from "./loading";
 import AlertModal from "./AlertModal";
 import SuccessModal from "./SuccessModal";
 import alertCircle from "../../assets/images/alert-circle.svg";
-import { trackEvent } from '../../utils/analytics';
+import { trackEvent } from "../../utils/analytics";
 
-const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUploadSuccess }) => {
+const FileUploadModal = ({
+  setIsOpen,
+  isLandingPage,
+  setTestReferencesList,
+  onUploadSuccess,
+}) => {
   const [uploadStatus, setUploadStatus] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [errorAlertModalIsOpen, setErrorAlertModalIsOpen] = useState(false);
@@ -44,10 +49,10 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
         formData.append("pdf", files[0]);
 
         try {
-          trackEvent('file_upload_start', { 
-            page: 'landing',
+          trackEvent("file_upload_start", {
+            page: "landing",
             file_count: 1,
-            file_size: files[0].size
+            file_size: files[0].size,
           });
 
           const response = await testUploadPaper(formData, config);
@@ -56,9 +61,9 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
           setUploadStatus(false);
           setUploadSuccessModalIsOpen(true);
 
-          trackEvent('file_upload_success', { 
-            page: 'landing',
-            file_count: 1
+          trackEvent("file_upload_success", {
+            page: "landing",
+            file_count: 1,
           });
 
           if (onUploadSuccess) onUploadSuccess();
@@ -66,9 +71,9 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
             setIsOpen(false);
           }, 1000);
         } catch (error) {
-          trackEvent('file_upload_error', { 
-            page: 'landing',
-            error: error.message
+          trackEvent("file_upload_error", {
+            page: "landing",
+            error: error.message,
           });
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
@@ -77,10 +82,10 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
       }
 
       // For non-landing page uploads
-      trackEvent('file_upload_start', { 
-        page: 'main',
+      trackEvent("file_upload_start", {
+        page: "main",
         file_count: files.length,
-        total_size: Array.from(files).reduce((acc, file) => acc + file.size, 0)
+        total_size: Array.from(files).reduce((acc, file) => acc + file.size, 0),
       });
 
       for (let i = 0; i < files.length; i++) {
@@ -90,23 +95,27 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
 
         try {
           const response_paper = await uploadPaper(formData, config);
-          
-          if (!response_paper || !response_paper.data || !response_paper.data.paper_id) {
+
+          if (
+            !response_paper ||
+            !response_paper.data ||
+            !response_paper.data.paper_id
+          ) {
             throw new Error("Paper ID not found in response");
           }
-          
+
           // Generate paper info after successful upload
           await uploadPaperInfo(response_paper.data.paper_id);
-          trackEvent('file_upload_success', { 
-            page: 'main',
+          trackEvent("file_upload_success", {
+            page: "main",
             file_index: i + 1,
-            file_count: files.length
+            file_count: files.length,
           });
         } catch (error) {
-          trackEvent('file_upload_error', { 
-            page: 'main',
+          trackEvent("file_upload_error", {
+            page: "main",
             file_index: i + 1,
-            error: error.message
+            error: error.message,
           });
           setErrorAlertModalIsOpen(true);
           setUploadStatus(false);
@@ -145,16 +154,16 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragOver(false);
-    trackEvent('file_drop', { 
-      page: isLandingPage ? 'landing' : 'main'
+    trackEvent("file_drop", {
+      page: isLandingPage ? "landing" : "main",
     });
     handleFileChange(e.dataTransfer.files);
   };
 
   const handleInputChange = (e) => {
-    trackEvent('file_select', { 
-      page: isLandingPage ? 'landing' : 'main',
-      method: 'click'
+    trackEvent("file_select", {
+      page: isLandingPage ? "landing" : "main",
+      method: "click",
     });
     handleFileChange(e.target.files);
   };
@@ -197,7 +206,9 @@ const FileUploadModal = ({ setIsOpen, isLandingPage, setTestReferencesList, onUp
           <FileUp className="w-5 sm:w-6 h-5 sm:h-6 relative text-neutral-400" />
           <div className="text-center text-neutral-400 text-sm sm:text-base font-medium font-['Pretendard'] leading-tight sm:pt-4 pt-2">
             PDF 파일을 업로드해주세요
-            {!isLandingPage && <div className='text-neutral-400'>(여러 파일 선택 가능)</div>}
+            {!isLandingPage && (
+              <div className="text-neutral-400">(여러 파일 선택 가능)</div>
+            )}
           </div>
         </div>
       </div>
